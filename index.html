@@ -1,0 +1,1887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Witcher: Old World — Companion</title>
+<style>
+/* =====================================================
+   CSS VARIABLES & RESET
+   ===================================================== */
+:root {
+  --bg-dark:       #0a0a0a;
+  --bg-card:       #141414;
+  --bg-card-2:     #1c1c1c;
+  --bg-hover:      #222;
+  --gold:          #c9a84c;
+  --gold-light:    #e8cb78;
+  --gold-dark:     #7a5c20;
+  --gold-dim:      #3a2c10;
+  --text:          #e0d8c8;
+  --text-sec:      #9a8a6a;
+  --text-muted:    #555;
+  --red:           #7a1a1a;
+  --red-light:     #c83030;
+  --green:         #1a4a1a;
+  --green-light:   #3a8a3a;
+  --blue-dark:     #0a1a30;
+  --border:        #242424;
+  --border-gold:   #3a2c10;
+  --shadow:        0 4px 24px rgba(0,0,0,.6);
+  --radius:        6px;
+  --transition:    .18s ease;
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body {
+  background:var(--bg-dark);
+  color:var(--text);
+  font-family:Georgia,'Times New Roman',serif;
+  font-size:15px;
+  line-height:1.6;
+  min-height:100vh;
+}
+::-webkit-scrollbar { width:5px; height:5px; }
+::-webkit-scrollbar-track { background:#0a0a0a; }
+::-webkit-scrollbar-thumb { background:var(--gold-dark); border-radius:3px; }
+
+/* =====================================================
+   HEADER
+   ===================================================== */
+#app-header {
+  background:linear-gradient(180deg,#180f00 0%,#0a0a0a 100%);
+  border-bottom:2px solid var(--gold-dark);
+  padding:.75rem 1.25rem;
+  position:sticky;
+  top:0;
+  z-index:200;
+  box-shadow:0 2px 20px rgba(0,0,0,.8);
+}
+#app-header .header-top {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:.5rem;
+}
+#app-header h1 {
+  color:var(--gold);
+  font-size:1.4rem;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  text-shadow:0 0 20px rgba(201,168,76,.35);
+}
+#app-header h1 span { color:var(--text-sec); font-size:.7rem; display:block; letter-spacing:2px; }
+.header-tools {
+  display:flex;
+  flex-wrap:wrap;
+  gap:.4rem;
+  align-items:center;
+}
+
+/* =====================================================
+   NAV TABS
+   ===================================================== */
+#main-nav {
+  background:#0d0d0d;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  flex-wrap:wrap;
+  gap:.25rem;
+  padding:.5rem .75rem;
+  position:sticky;
+  top:70px;
+  z-index:190;
+}
+.nav-btn {
+  background:transparent;
+  border:1px solid transparent;
+  border-radius:var(--radius);
+  color:var(--text-muted);
+  cursor:pointer;
+  font-family:Georgia,serif;
+  font-size:.72rem;
+  letter-spacing:1px;
+  padding:.35rem .7rem;
+  text-transform:uppercase;
+  transition:all var(--transition);
+}
+.nav-btn:hover { border-color:var(--gold-dark); color:var(--text-sec); }
+.nav-btn.active { background:var(--gold-dim); border-color:var(--gold-dark); color:var(--gold-light); }
+
+/* =====================================================
+   MAIN LAYOUT
+   ===================================================== */
+#main { max-width:1440px; margin:0 auto; padding:1rem; }
+
+/* =====================================================
+   SECTIONS
+   ===================================================== */
+.section { display:none; }
+.section.active { display:block; animation:fadeIn .25s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(-6px)} to{opacity:1;transform:none} }
+
+/* =====================================================
+   CARDS
+   ===================================================== */
+.card {
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  margin-bottom:1rem;
+  overflow:hidden;
+  transition:border-color var(--transition);
+}
+.card:hover { border-color:var(--border-gold); }
+.card-header {
+  align-items:center;
+  background:linear-gradient(90deg,#1a1200 0%,#0e0e0e 100%);
+  border-bottom:1px solid var(--border-gold);
+  cursor:pointer;
+  display:flex;
+  justify-content:space-between;
+  padding:.65rem 1rem;
+  user-select:none;
+}
+.card-header h2,.card-header h3 {
+  color:var(--gold);
+  font-size:.9rem;
+  letter-spacing:2px;
+  text-transform:uppercase;
+}
+.card-body { padding:1rem; }
+.collapse-icon {
+  color:var(--gold);
+  font-size:1rem;
+  transition:transform .25s;
+  flex-shrink:0;
+}
+.card.collapsed .card-body { display:none; }
+.card.collapsed .collapse-icon { transform:rotate(-90deg); }
+
+/* =====================================================
+   BUTTONS
+   ===================================================== */
+.btn {
+  border:none;
+  border-radius:var(--radius);
+  cursor:pointer;
+  font-family:Georgia,serif;
+  font-size:.8rem;
+  letter-spacing:.5px;
+  padding:.45rem .9rem;
+  transition:all var(--transition);
+  white-space:nowrap;
+}
+.btn-gold {
+  background:linear-gradient(180deg,var(--gold) 0%,var(--gold-dark) 100%);
+  color:#000;
+  font-weight:bold;
+}
+.btn-gold:hover { background:linear-gradient(180deg,var(--gold-light) 0%,var(--gold) 100%); box-shadow:0 0 10px rgba(201,168,76,.35); }
+.btn-danger { background:linear-gradient(180deg,var(--red-light) 0%,var(--red) 100%); color:#fff; }
+.btn-danger:hover { filter:brightness(1.15); }
+.btn-success { background:linear-gradient(180deg,var(--green-light) 0%,var(--green) 100%); color:#fff; }
+.btn-success:hover { filter:brightness(1.15); }
+.btn-ghost { background:transparent; border:1px solid var(--border); color:var(--text-sec); }
+.btn-ghost:hover { border-color:var(--gold-dark); color:var(--gold); }
+.btn-sm { font-size:.72rem; padding:.3rem .6rem; }
+
+/* +/- icon buttons */
+.ic-btn {
+  align-items:center;
+  background:var(--bg-card-2);
+  border:1px solid var(--border);
+  border-radius:4px;
+  color:var(--text);
+  cursor:pointer;
+  display:inline-flex;
+  font-size:1rem;
+  height:34px;
+  justify-content:center;
+  min-width:34px;
+  padding:0;
+  transition:all var(--transition);
+  flex-shrink:0;
+}
+.ic-btn:hover { background:var(--gold-dim); border-color:var(--gold-dark); color:var(--gold-light); }
+.ic-btn.minus:hover { background:var(--red); border-color:var(--red-light); color:#fff; }
+.ic-btn.plus:hover { background:var(--green); border-color:var(--green-light); color:#fff; }
+
+/* =====================================================
+   FORM ELEMENTS
+   ===================================================== */
+.form-group { margin-bottom:.85rem; }
+label {
+  color:var(--text-sec);
+  display:block;
+  font-size:.72rem;
+  letter-spacing:1px;
+  margin-bottom:.3rem;
+  text-transform:uppercase;
+}
+input[type=text],input[type=number],select,textarea {
+  background:#0e0e0e;
+  border:1px solid var(--border);
+  border-radius:4px;
+  color:var(--text);
+  font-family:Georgia,serif;
+  font-size:.85rem;
+  padding:.45rem .65rem;
+  transition:border-color var(--transition);
+  width:100%;
+}
+input:focus,select:focus,textarea:focus { border-color:var(--gold-dark); outline:none; }
+input[type=checkbox] { width:auto; accent-color:var(--gold); cursor:pointer; }
+
+/* stat number display */
+.stat-val {
+  background:#0e0e0e;
+  border:1px solid var(--border);
+  border-radius:4px;
+  color:var(--gold-light);
+  font-size:1.05rem;
+  font-weight:bold;
+  min-width:46px;
+  padding:.2rem .4rem;
+  text-align:center;
+}
+.stat-row { align-items:center; display:flex; gap:.4rem; }
+
+/* =====================================================
+   GRID / FLEX UTILITIES
+   ===================================================== */
+.g2 { display:grid; gap:1rem; grid-template-columns:repeat(2,1fr); }
+.g3 { display:grid; gap:1rem; grid-template-columns:repeat(3,1fr); }
+.g4 { display:grid; gap:.75rem; grid-template-columns:repeat(4,1fr); }
+.gauto { display:grid; gap:.75rem; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); }
+@media(max-width:768px) { .g3,.g4{grid-template-columns:repeat(2,1fr);} }
+@media(max-width:480px) { .g2,.g3,.g4{grid-template-columns:1fr;} }
+.flex { display:flex; }
+.flex-wrap { flex-wrap:wrap; }
+.gap-xs { gap:.3rem; }
+.gap-sm { gap:.5rem; }
+.gap-md { gap:1rem; }
+.ai-c { align-items:center; }
+.jc-c { justify-content:center; }
+.jc-sb { justify-content:space-between; }
+.f1 { flex:1; min-width:0; }
+.mt1 { margin-top:.5rem; } .mt2 { margin-top:1rem; }
+.mb1 { margin-bottom:.5rem; } .mb2 { margin-bottom:1rem; }
+.text-c { text-align:center; }
+.text-gold { color:var(--gold); }
+.text-sec { color:var(--text-sec); }
+.text-muted { color:var(--text-muted); }
+.text-red { color:var(--red-light); }
+.text-green { color:var(--green-light); }
+.w100 { width:100%; }
+.scrollable { max-height:280px; overflow-y:auto; padding-right:2px; }
+.divider { border:none; border-top:1px solid var(--border); margin:1rem 0; }
+hr.gold { border-color:var(--gold-dim); }
+
+/* =====================================================
+   PLAYER TABS
+   ===================================================== */
+.player-tabs { display:flex; flex-wrap:wrap; gap:.4rem; margin-bottom:1rem; }
+.ptab {
+  align-items:center;
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  color:var(--text-sec);
+  cursor:pointer;
+  display:inline-flex;
+  font-family:Georgia,serif;
+  font-size:.82rem;
+  gap:.4rem;
+  padding:.4rem .85rem;
+  transition:all var(--transition);
+}
+.ptab:hover,.ptab.active {
+  background:var(--gold-dim);
+  border-color:var(--gold-dark);
+  color:var(--gold-light);
+}
+.ptab .ptab-x {
+  background:none;
+  border:none;
+  color:var(--red-light);
+  cursor:pointer;
+  font-size:.75rem;
+  line-height:1;
+  padding:0 1px;
+}
+.ptab .ptab-x:hover { color:#ff6060; }
+
+/* =====================================================
+   STAT MINI CARD
+   ===================================================== */
+.stat-card {
+  background:#0e0e0e;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:.65rem .5rem;
+  text-align:center;
+}
+.stat-card .sc-icon { display:block; font-size:1.3rem; margin-bottom:.15rem; }
+.stat-card .sc-label { color:var(--text-sec); font-size:.65rem; letter-spacing:1px; text-transform:uppercase; margin-bottom:.35rem; }
+.stat-card .stat-row { justify-content:center; }
+
+/* =====================================================
+   HEALTH BAR
+   ===================================================== */
+.hp-bar-bg { background:#111; border:1px solid var(--border); border-radius:8px; height:10px; overflow:hidden; margin-top:.4rem; }
+.hp-bar { background:linear-gradient(90deg,var(--red),var(--red-light)); height:100%; transition:width .35s; }
+
+/* =====================================================
+   LIST ITEM
+   ===================================================== */
+.list-item {
+  align-items:center;
+  background:#0e0e0e;
+  border:1px solid var(--border);
+  border-radius:4px;
+  display:flex;
+  gap:.5rem;
+  justify-content:space-between;
+  margin-bottom:.35rem;
+  padding:.4rem .65rem;
+  transition:border-color var(--transition);
+}
+.list-item:hover { border-color:var(--border-gold); }
+.list-item .li-x {
+  background:none;
+  border:none;
+  color:var(--red-light);
+  cursor:pointer;
+  font-size:.75rem;
+  padding:0 2px;
+  flex-shrink:0;
+}
+
+/* =====================================================
+   QUEST ITEM
+   ===================================================== */
+.quest-item {
+  align-items:flex-start;
+  background:#0e0e0e;
+  border:1px solid var(--border);
+  border-radius:4px;
+  display:flex;
+  gap:.5rem;
+  margin-bottom:.35rem;
+  padding:.5rem .65rem;
+  transition:border-color var(--transition);
+}
+.quest-item:hover { border-color:var(--border-gold); }
+.quest-item.done { opacity:.5; }
+.quest-item.done .qi-name { text-decoration:line-through; }
+.qi-name { font-size:.85rem; }
+.qi-reward { color:var(--gold); font-size:.75rem; }
+.qi-date { color:var(--text-muted); font-size:.7rem; }
+
+/* =====================================================
+   DICE
+   ===================================================== */
+.dice-area { display:flex; flex-wrap:wrap; gap:.75rem; justify-content:center; margin:1rem 0; min-height:90px; }
+.die {
+  align-items:center;
+  background:var(--bg-card-2);
+  border:2px solid var(--gold-dark);
+  border-radius:10px;
+  display:flex;
+  flex-direction:column;
+  gap:.15rem;
+  height:80px;
+  justify-content:center;
+  width:80px;
+  transition:all .3s;
+  cursor:default;
+}
+.die .die-val { font-size:1.8rem; line-height:1; color:var(--gold-light); }
+.die .die-label { font-size:.6rem; color:var(--text-muted); letter-spacing:1px; }
+@keyframes spin { 0%{transform:rotate(0)scale(1)} 30%{transform:rotate(120deg)scale(1.15)} 70%{transform:rotate(260deg)scale(.9)} 100%{transform:rotate(360deg)scale(1)} }
+.die.rolling { animation:spin .45s ease-out; }
+
+/* =====================================================
+   SCHOOL BADGE
+   ===================================================== */
+.school-badge {
+  align-items:center;
+  background:linear-gradient(135deg,var(--gold-dark),#3a2500);
+  border:2px solid var(--gold-dark);
+  border-radius:50%;
+  color:var(--gold-light);
+  display:inline-flex;
+  font-size:1.4rem;
+  height:46px;
+  justify-content:center;
+  width:46px;
+  flex-shrink:0;
+}
+
+/* =====================================================
+   BADGE / TAG
+   ===================================================== */
+.badge {
+  background:var(--gold-dim);
+  border-radius:10px;
+  color:var(--gold-light);
+  font-size:.65rem;
+  letter-spacing:.5px;
+  padding:.1rem .5rem;
+}
+.badge.red { background:var(--red); color:#ff9090; }
+.badge.green { background:var(--green); color:#90ff90; }
+
+/* =====================================================
+   MONSTER CARD (Random Generator)
+   ===================================================== */
+.monster-card {
+  background:linear-gradient(135deg,#160505,#0e0e0e);
+  border:1px solid #3a1010;
+  border-radius:8px;
+  padding:1.25rem;
+  text-align:center;
+  animation:fadeIn .3s ease;
+}
+.monster-card h3 { color:#e05050; font-size:1.25rem; margin:.5rem 0; }
+.monster-ability {
+  background:#111;
+  border-radius:4px;
+  color:var(--gold);
+  font-size:.82rem;
+  margin-top:.75rem;
+  padding:.5rem .75rem;
+  text-align:left;
+}
+
+/* =====================================================
+   EVENT CARD (Random Generator)
+   ===================================================== */
+.event-card {
+  background:linear-gradient(135deg,#05061a,#0e0e0e);
+  border:1px solid #101040;
+  border-radius:8px;
+  padding:1.25rem;
+  animation:fadeIn .3s ease;
+}
+.event-card h3 { color:#7090e0; font-size:1.1rem; margin:.5rem 0; }
+.event-effect {
+  background:#111;
+  border-radius:4px;
+  color:var(--gold);
+  font-size:.82rem;
+  margin-top:.75rem;
+  padding:.5rem .75rem;
+}
+
+/* =====================================================
+   TROPHY GALLERY
+   ===================================================== */
+.trophy-grid { display:grid; gap:.65rem; grid-template-columns:repeat(auto-fill,minmax(110px,1fr)); }
+.trophy-card {
+  background:#0e0e0e;
+  border:1px solid var(--border-gold);
+  border-radius:var(--radius);
+  padding:.65rem .5rem;
+  text-align:center;
+  transition:border-color var(--transition);
+}
+.trophy-card:hover { border-color:var(--gold); }
+.trophy-card .tc-icon { font-size:2rem; display:block; margin-bottom:.25rem; }
+.trophy-card .tc-name { color:var(--gold-light); font-size:.75rem; }
+.trophy-card .tc-sub { color:var(--text-muted); font-size:.65rem; margin-top:.15rem; }
+.trophy-card .tc-x {
+  background:none; border:none; color:var(--red-light); cursor:pointer; font-size:.7rem; margin-top:.3rem; display:block; width:100%;
+}
+
+/* =====================================================
+   POTION ITEM
+   ===================================================== */
+.potion-item {
+  align-items:center;
+  background:#080f08;
+  border:1px solid #153015;
+  border-radius:var(--radius);
+  display:flex;
+  gap:.75rem;
+  margin-bottom:.45rem;
+  padding:.5rem .75rem;
+  transition:border-color var(--transition);
+}
+.potion-item:hover { border-color:#2a502a; }
+.potion-icon { font-size:1.6rem; flex-shrink:0; }
+.potion-info { flex:1; min-width:0; }
+.potion-info .p-name { color:var(--gold-light); font-size:.88rem; }
+.potion-info .p-effect { color:var(--text-sec); font-size:.75rem; }
+
+/* =====================================================
+   STAT BAR (Stats section)
+   ===================================================== */
+.sbar-bg { background:#111; border-radius:3px; height:7px; overflow:hidden; margin-top:.25rem; }
+.sbar { background:linear-gradient(90deg,var(--gold-dark),var(--gold)); height:100%; transition:width .5s; }
+
+/* =====================================================
+   INNER TABS
+   ===================================================== */
+.inner-tabs { border-bottom:1px solid var(--border); display:flex; gap:.25rem; margin-bottom:1rem; flex-wrap:wrap; }
+.itab {
+  background:none;
+  border:none;
+  border-bottom:2px solid transparent;
+  color:var(--text-muted);
+  cursor:pointer;
+  font-family:Georgia,serif;
+  font-size:.75rem;
+  letter-spacing:1px;
+  padding:.4rem .9rem;
+  text-transform:uppercase;
+  transition:all var(--transition);
+}
+.itab:hover { color:var(--text-sec); }
+.itab.active { border-bottom-color:var(--gold); color:var(--gold); }
+.itab-panel { display:none; }
+.itab-panel.active { display:block; }
+
+/* =====================================================
+   TOAST NOTIFICATIONS
+   ===================================================== */
+#toasts {
+  bottom:1.25rem;
+  display:flex;
+  flex-direction:column;
+  gap:.4rem;
+  pointer-events:none;
+  position:fixed;
+  right:1rem;
+  z-index:9999;
+}
+.toast {
+  background:var(--bg-card-2);
+  border-left:4px solid var(--gold);
+  border-radius:4px;
+  box-shadow:var(--shadow);
+  color:var(--text);
+  font-size:.8rem;
+  max-width:300px;
+  padding:.6rem .9rem;
+  animation:slideIn .25s ease;
+}
+.toast.err { border-left-color:var(--red-light); }
+.toast.ok  { border-left-color:var(--green-light); }
+@keyframes slideIn { from{transform:translateX(110%);opacity:0} to{transform:none;opacity:1} }
+
+/* =====================================================
+   CONFIRM OVERLAY
+   ===================================================== */
+#confirm-overlay {
+  align-items:center;
+  background:rgba(0,0,0,.82);
+  display:none;
+  inset:0;
+  justify-content:center;
+  position:fixed;
+  z-index:9000;
+}
+#confirm-overlay.open { display:flex; }
+.confirm-box {
+  background:var(--bg-card);
+  border:1px solid var(--gold-dark);
+  border-radius:8px;
+  max-width:380px;
+  padding:2rem;
+  text-align:center;
+  width:92%;
+}
+.confirm-box h3 { color:var(--gold); margin-bottom:.75rem; }
+.confirm-box p { color:var(--text-sec); margin-bottom:1.25rem; font-size:.88rem; }
+
+/* =====================================================
+   TOOLTIP
+   ===================================================== */
+[data-tip] { position:relative; }
+[data-tip]:hover::after {
+  background:#0a0a0a;
+  border:1px solid var(--border-gold);
+  border-radius:4px;
+  bottom:calc(100% + 6px);
+  color:var(--text);
+  content:attr(data-tip);
+  font-size:.72rem;
+  left:50%;
+  padding:.3rem .6rem;
+  position:absolute;
+  transform:translateX(-50%);
+  white-space:nowrap;
+  z-index:300;
+  pointer-events:none;
+}
+
+/* =====================================================
+   MISC
+   ===================================================== */
+.empty-msg { color:var(--text-muted); font-style:italic; padding:1rem; text-align:center; font-size:.85rem; }
+.big-num { color:var(--gold); font-size:2.8rem; font-weight:bold; text-align:center; text-shadow:0 0 16px rgba(201,168,76,.4); line-height:1; }
+.enemy-hp-big { color:var(--red-light); font-size:2.2rem; font-weight:bold; text-align:center; }
+.loc-badge {
+  background:#080f08;
+  border:1px solid #153015;
+  border-radius:var(--radius);
+  color:#5aaa5a;
+  font-size:.88rem;
+  margin-top:.5rem;
+  padding:.5rem .75rem;
+  text-align:center;
+}
+
+/* Search highlight */
+.hl { background:rgba(201,168,76,.25); border-radius:2px; }
+</style>
+</head>
+<body>
+
+<!-- ── Toast container ── -->
+<div id="toasts"></div>
+
+<!-- ── Confirm overlay ── -->
+<div id="confirm-overlay">
+  <div class="confirm-box">
+    <h3 id="cfm-title">Confirm</h3>
+    <p id="cfm-msg">Are you sure?</p>
+    <div class="flex gap-sm jc-c">
+      <button class="btn btn-danger" id="cfm-yes">Confirm</button>
+      <button class="btn btn-ghost" id="cfm-no">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     HEADER
+════════════════════════════════════════════════════ -->
+<header id="app-header">
+  <div class="header-top">
+    <h1>⚔ The Witcher: Old World <span>Companion App</span></h1>
+    <div class="header-tools">
+      <input type="text" id="search-input" style="width:160px;border-radius:20px;font-size:.78rem;" placeholder="🔍 Search…" oninput="App.search(this.value)">
+      <button class="btn btn-ghost btn-sm" id="undo-btn" onclick="App.undo()" disabled data-tip="Undo last action">↩ Undo</button>
+      <button class="btn btn-ghost btn-sm" onclick="App.exportData()" data-tip="Export game to JSON">📤 Export</button>
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('file-import').click()" data-tip="Import game from JSON">📥 Import</button>
+      <input type="file" id="file-import" accept=".json" style="display:none" onchange="App.importData(event)">
+      <button class="btn btn-danger btn-sm" onclick="App.confirmReset()" data-tip="Reset all data">🗑 Reset</button>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════
+     NAV
+════════════════════════════════════════════════════ -->
+<nav id="main-nav">
+  <button class="nav-btn active" data-sec="players"    onclick="App.nav('players')">👤 Players</button>
+  <button class="nav-btn"        data-sec="dashboard"  onclick="App.nav('dashboard')">📊 Dashboard</button>
+  <button class="nav-btn"        data-sec="combat"     onclick="App.nav('combat')">⚔ Combat</button>
+  <button class="nav-btn"        data-sec="cards"      onclick="App.nav('cards')">🃏 Cards</button>
+  <button class="nav-btn"        data-sec="meditation" onclick="App.nav('meditation')">🌙 Meditation</button>
+  <button class="nav-btn"        data-sec="quests"     onclick="App.nav('quests')">📜 Quests</button>
+  <button class="nav-btn"        data-sec="world"      onclick="App.nav('world')">🗺 World</button>
+  <button class="nav-btn"        data-sec="potions"    onclick="App.nav('potions')">🧪 Potions</button>
+  <button class="nav-btn"        data-sec="trophies"   onclick="App.nav('trophies')">🏆 Trophies</button>
+  <button class="nav-btn"        data-sec="dice"       onclick="App.nav('dice')">🎲 Dice</button>
+  <button class="nav-btn"        data-sec="random"     onclick="App.nav('random')">🎰 Random</button>
+  <button class="nav-btn"        data-sec="stats"      onclick="App.nav('stats')">📈 Stats</button>
+  <button class="nav-btn"        data-sec="notes"      onclick="App.nav('notes')">📝 Notes</button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════
+     MAIN
+════════════════════════════════════════════════════ -->
+<div id="main">
+
+<!-- ────────────────────────────────────────────────
+     PLAYERS
+──────────────────────────────────────────────── -->
+<section id="sec-players" class="section active">
+  <div class="card">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2>👤 Player Management</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="flex flex-wrap gap-sm ai-c mb2">
+        <input type="text" id="np-name" placeholder="Witcher name…" maxlength="28" style="flex:2;min-width:130px;" onkeydown="if(event.key==='Enter')App.addPlayer()">
+        <select id="np-school" style="flex:1;min-width:130px;">
+          <option value="Wolf">🐺 Wolf</option>
+          <option value="Cat">🐱 Cat</option>
+          <option value="Bear">🐻 Bear</option>
+          <option value="Griffin">🦅 Griffin</option>
+          <option value="Viper">🐍 Viper</option>
+          <option value="Manticore">🦂 Manticore</option>
+        </select>
+        <button class="btn btn-gold" onclick="App.addPlayer()">+ Add Witcher</button>
+      </div>
+      <div id="player-list"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────
+     DASHBOARD
+──────────────────────────────────────────────── -->
+<section id="sec-dashboard" class="section">
+  <div id="dashboard-root"></div>
+</section>
+
+<!-- ────────────────────────────────────────────────
+     COMBAT
+──────────────────────────────────────────────── -->
+<section id="sec-combat" class="section">
+  <div class="card">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2>⚔ Combat Tracker</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="g2">
+        <!-- Enemy column -->
+        <div>
+          <div class="form-group">
+            <label>Enemy Name</label>
+            <input type="text" id="c-enemy" placeholder="Enemy name…" oninput="App.saveCombat()">
+          </div>
+          <div class="form-group">
+            <label>Enemy Level</label>
+            <div class="stat-row">
+              <button class="ic-btn minus" onclick="App.combatAdj('enemyLevel',-1)">−</button>
+              <div class="stat-val" id="c-elevel">1</div>
+              <button class="ic-btn plus"  onclick="App.combatAdj('enemyLevel',1)">+</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Enemy Health</label>
+            <div class="stat-row">
+              <button class="ic-btn minus" onclick="App.combatAdj('enemyHealth',-1)">−</button>
+              <div class="stat-val" id="c-ehealth">10</div>
+              <button class="ic-btn plus"  onclick="App.combatAdj('enemyHealth',1)">+</button>
+            </div>
+            <div class="enemy-hp-big mt1" id="c-ehp-big">❤ 10</div>
+          </div>
+        </div>
+        <!-- Player column -->
+        <div>
+          <div class="form-group">
+            <label>Damage Dealt</label>
+            <div class="stat-row">
+              <button class="ic-btn minus" onclick="App.combatAdj('damageDealt',-1)">−</button>
+              <div class="stat-val" id="c-dd">0</div>
+              <button class="ic-btn plus"  onclick="App.combatAdj('damageDealt',1)">+</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Damage Received</label>
+            <div class="stat-row">
+              <button class="ic-btn minus" onclick="App.combatAdj('damageReceived',-1)">−</button>
+              <div class="stat-val" id="c-dr">0</div>
+              <button class="ic-btn plus"  onclick="App.combatAdj('damageReceived',1)">+</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Quick HP (active player)</label>
+            <div class="flex flex-wrap gap-xs">
+              <button class="btn btn-danger btn-sm" onclick="App.quickHP(-5)">−5 HP</button>
+              <button class="btn btn-danger btn-sm" onclick="App.quickHP(-3)">−3 HP</button>
+              <button class="btn btn-danger btn-sm" onclick="App.quickHP(-1)">−1 HP</button>
+              <button class="btn btn-success btn-sm" onclick="App.quickHP(1)">+1 HP</button>
+              <button class="btn btn-success btn-sm" onclick="App.quickHP(3)">+3 HP</button>
+              <button class="btn btn-success btn-sm" onclick="App.quickHP(5)">+5 HP</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Combat Notes</label>
+        <textarea id="c-notes" rows="3" placeholder="Tactics, conditions, special rules…" oninput="App.saveCombat()"></textarea>
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="App.resetCombat()">🗑 End Combat / Clear</button>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────
+     CARDS
+──────────────────────────────────────────────── -->
+<section id="sec-cards" class="section">
+  <div class="card">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2>🃏 Card Deck Tracker</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body" id="cards-root"></div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────
+     MEDITATION
+──────────────────────────────────────────────── -->
+<section id="sec-meditation" class="section">
+  <div class="card">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2>🌙 Meditation Tracker</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="flex flex-wrap gap-md ai-c mb2">
+        <div>
+          <label>Meditations</label>
+          <div class="stat-row">
+            <button class="ic-btn minus" onclick="App.meditAdj(-1)">−</button>
+            <div class="stat-val" id="m-count">0</div>
+            <button class="ic-btn plus" onclick="App.meditAdj(1)">+</button>
+          </div>
+        </div>
+        <div class="f1">
+          <label>Effects Gained</label>
+          <input type="text" id="m-effects" placeholder="Effects from meditation…" oninput="App.saveMedit()">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Meditation Notes</label>
+        <textarea id="m-notes" rows="3" placeholder="Insights, preparations, decisions…" oninput="App.saveMedit()"></textarea>
+      </div>
+      <button class="btn btn-gold btn-sm mb2" onclick="App.logMedit()">📝 Log This Meditation</button>
+      <div id="m-log" class="scrollable"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────
+     QUESTS
+──────────────────────────────────────────────── -->
+<section id="sec-quests" class="section">
+  <div class="card">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2>📜 Quest Tracker</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="flex flex-wrap gap-sm mb2">
+        <input type="text" id="q-name" placeholder="Quest name…" style="flex:2;min-width:140px;" onkeydown="if(event.key==='Enter')App.addQuest()">
+        <input type="text" id="q-reward" placeholder="Reward…" style="flex:1;min-width:100px;">
+        <button class="btn btn-gold" onclick="App.addQuest()">+ Add Quest</button>
+      </div>
+      <h4 class="text-gold mb1">Active Quests</h4>
+      <div id="q-active" class="scrollable mb2"></div>
+      <h4 class="text-gold mb1">Completed Quests</h4>
+      <div id="q-done" class="scrollable"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────
+     WORLD
+──────────────────────────────────────────────── -->
+<section id="sec-world" class="section">
+  <div class="card">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2>🗺 World Tracker</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="g3">
+        <div class="text-c">
+          <label>Current Round</label>
+          <div class="big-num" id="w-round">1</div>
+          <div class="flex gap-sm jc-c mt1">
+            <button class="ic-btn minus" onclick="App.worldAdj('round',-1)">−</button>
+            <button class="ic-btn plus"  onclick="App.worldAdj('round',1)">+</button>
+          </div>
+        </div>
+        <div>
+          <label>Location</label>
+          <input type="text" id="w-location" placeholder="Current location…" oninput="App.saveWorld()">
+          <div class="loc-badge mt1" id="w-loc-badge">📍 Unknown</div>
+        </div>
+        <div>
+          <label>Conditions / Weather</label>
+          <input type="text" id="w-conditions" placeholder="Weather or special conditions…" oninput="App.saveWorld()">
+        </div>
+      </div>
+      <hr class="divider">
+      <div class="g2">
+        <div>
+          <h4 class="text-gold mb1">👾 Available Monsters</h4>
+          <div class="flex gap-sm mb1">
+            <input type="text" id="w-monster-in" placeholder="Monster name…" class="f1" onkeydown="if(event.key==='Enter')App.addWorldMonster()">
+            <button class="btn btn-danger btn-sm" onclick="App.addWorldMonster()">+</button>
+          </div>
+          <div id="w-monsters" class="scrollable"></div>
+        </div>
+        <div>
+          <h4 class="text-gold mb1">🏆 Available Trophies</h4>
+          <div class="flex gap-sm mb1">
+            <input type="text" id="w-trophy-in" placeholder="Trophy name…" class="f1" onkeydown="if(event.key==='Enter')App.addWorldTrophy()">
+            <button class="btn btn-gold btn-sm" onclick="App.addWorldTrophy()">+</button>
+          </div>
+          <div id="w-trophies" class="scrollable"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────
+     POTIONS
+──────────────────────────────────────────────── -->
+<section id="sec-potions" class="section">
+  <div class="card">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2>🧪 Potion Inventory</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="flex flex-wrap gap-sm mb2">
+        <input type="text" id="pot-name" placeholder="Potion name…" style="flex:2;min-width:130px;">
+        <input type="text" id="pot-effect" placeholder="Effect…" style="flex:2;min-width:130px;">
+        <select id="pot-icon" style="width:56px;flex-shrink:0;">
+          <option>🧪</option><option>🍶</option><option>⚗️</option><option>💉</option><option>🌿</option><option>🔮</option>
+        </select>
+        <button class="btn btn-gold" onclick="App.addPotion()">+ Add</button>
+      </div>
+      <div id="pot-list"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────
+     TROPHIES
+──────────────────────────────────────────────── -->
+<section id="sec-trophies" class="section">
+  <div class="card">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2>🏆 Trophy Collection</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="flex flex-wrap gap-sm mb2">
+        <input type="text" id="tr-name" placeholder="Trophy name…" style="flex:2;min-width:130px;">
+        <input type="text" id="tr-monster" placeholder="Monster defeated…" style="flex:2;min-width:130px;">
+        <select id="tr-icon" style="width:56px;flex-shrink:0;">
+          <option>🐺</option><option>🐉</option><option>🕷️</option><option>💀</option><option>🦂</option>
+          <option>🐸</option><option>👾</option><option>🔮</option><option>⚔️</option><option>🏆</option>
+          <option>🦁</option><option>🧟</option><option>🧛</option><option>🌲</option><option>💎</option>
+        </select>
+        <button class="btn btn-gold" onclick="App.addTrophy()">+ Add</button>
+      </div>
+      <div id="trophy-gallery" class="trophy-grid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────
+     DICE
+──────────────────────────────────────────────── -->
+<section id="sec-dice" class="section">
+  <div class="card">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2>🎲 Dice Roller</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="flex flex-wrap gap-sm jc-c mb2">
+        <button class="btn btn-gold" onclick="App.rollOne(4)"  data-tip="Roll a 4-sided die">D4</button>
+        <button class="btn btn-gold" onclick="App.rollOne(6)"  data-tip="Roll a 6-sided die">D6</button>
+        <button class="btn btn-gold" onclick="App.rollOne(8)"  data-tip="Roll an 8-sided die">D8</button>
+        <button class="btn btn-gold" onclick="App.rollOne(10)" data-tip="Roll a 10-sided die">D10</button>
+        <button class="btn btn-gold" onclick="App.rollOne(12)" data-tip="Roll a 12-sided die">D12</button>
+        <button class="btn btn-gold" onclick="App.rollOne(20)" data-tip="Roll a 20-sided die">D20</button>
+        <button class="btn btn-gold" onclick="App.rollOne(100)" data-tip="Roll percentile">D100</button>
+      </div>
+      <div class="flex gap-sm ai-c jc-c mb2">
+        <label style="margin:0;white-space:nowrap;">Roll</label>
+        <select id="dice-n" style="width:64px;">
+          <option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option>
+        </select>
+        <select id="dice-s" style="width:72px;">
+          <option value="4">D4</option><option value="6" selected>D6</option><option value="8">D8</option>
+          <option value="10">D10</option><option value="12">D12</option><option value="20">D20</option>
+        </select>
+        <button class="btn btn-gold" onclick="App.rollMany()">Roll!</button>
+      </div>
+      <div class="dice-area" id="dice-display"></div>
+      <div id="dice-history" class="scrollable mt1"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────
+     RANDOM GENERATORS
+──────────────────────────────────────────────── -->
+<section id="sec-random" class="section">
+  <div class="card">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2>🎰 Random Generators</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="inner-tabs">
+        <button class="itab active" onclick="UI.itab(this,'rnd-monsters')">👾 Monsters</button>
+        <button class="itab"        onclick="UI.itab(this,'rnd-events')">⚡ Events</button>
+      </div>
+      <div id="rnd-monsters" class="itab-panel active">
+        <button class="btn btn-gold mb2" onclick="App.genMonster()">🎲 Generate Random Monster</button>
+        <div id="monster-result"></div>
+      </div>
+      <div id="rnd-events" class="itab-panel">
+        <button class="btn btn-gold mb2" onclick="App.genEvent()">🎲 Generate Random Event</button>
+        <div id="event-result"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────
+     STATS
+──────────────────────────────────────────────── -->
+<section id="sec-stats" class="section">
+  <div class="card">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2>📈 Campaign Statistics</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body" id="stats-root"></div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────
+     NOTES
+──────────────────────────────────────────────── -->
+<section id="sec-notes" class="section">
+  <div class="card">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2>📝 Campaign Notes</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="flex jc-sb ai-c mb1">
+        <span class="text-muted" style="font-size:.75rem;">Auto-saved to localStorage</span>
+        <button class="btn btn-ghost btn-sm" onclick="App.clearNotes()">Clear Notes</button>
+      </div>
+      <textarea id="notes-ta" style="min-height:240px;resize:vertical;"
+        placeholder="Campaign notes, story events, important decisions, anything you want to remember…"
+        oninput="App.saveNotes()"></textarea>
+    </div>
+  </div>
+</section>
+
+</div><!-- /#main -->
+
+<!-- ═══════════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* =====================================================
+   CONSTANTS & DATA
+   ===================================================== */
+
+const SCHOOLS = { Wolf:'🐺', Cat:'🐱', Bear:'🐻', Griffin:'🦅', Viper:'🐍', Manticore:'🦂' };
+
+const MONSTERS_DB = [
+  { name:'Nekker',      type:'Beast',      icon:'👾', lvl:1, hp:8,  weakness:'Silver',        ability:'Pack Hunter — attacks twice if others are nearby' },
+  { name:'Drowner',     type:'Drowner',    icon:'🦑', lvl:1, hp:10, weakness:'Igni sign',      ability:'Water Drag — pulls witcher into water terrain' },
+  { name:'Ghoul',       type:'Necrophage', icon:'💀', lvl:2, hp:12, weakness:'Yrden sign',     ability:'Corpse Eater — heals 2 HP per dead enemy adjacent' },
+  { name:'Wyvern',      type:'Draconid',   icon:'🐉', lvl:3, hp:16, weakness:'Grapeshot bomb', ability:'Aerial Strike — ignores shields on first hit' },
+  { name:'Leshen',      type:'Relict',     icon:'🌲', lvl:5, hp:24, weakness:'Axii sign',      ability:'Forest King — summons crow & wolf tokens each round' },
+  { name:'Katakan',     type:'Vampire',    icon:'🧛', lvl:3, hp:14, weakness:'Vampire Oil',    ability:'Mist Form — 50% chance to dodge each hit' },
+  { name:'Striga',      type:'Cursed One', icon:'👻', lvl:4, hp:20, weakness:'Cursed Oil',     ability:'Rage — deals double damage below 5 HP' },
+  { name:'Cyclops',     type:'Ogroid',     icon:'👁️',  lvl:3, hp:20, weakness:'Quen sign',      ability:'Boulder Smash — destroys all shields on hit' },
+  { name:'Griffin',     type:'Hybrid',     icon:'🦅', lvl:3, hp:15, weakness:'Dimeritium',     ability:'Wind Blast — pushes witcher back one space' },
+  { name:'Ice Giant',   type:'Ogroid',     icon:'🧊', lvl:6, hp:28, weakness:'Igni sign',      ability:'Blizzard — all witchers lose 1 HP at round start' },
+  { name:'Basilisk',    type:'Draconid',   icon:'🐍', lvl:4, hp:18, weakness:'Specter Oil',    ability:'Petrify Gaze — target witcher skips next action' },
+  { name:'Alps',        type:'Vampire',    icon:'🦇', lvl:2, hp:12, weakness:'Vampire Oil',    ability:'Drain Life — heals itself for damage dealt' },
+  { name:'Werewolf',    type:'Cursed One', icon:'🐺', lvl:3, hp:16, weakness:'Full Moon Dust', ability:'Frenzy — gains +2 attack during full moon phase' },
+  { name:'Rotfiend',    type:'Necrophage', icon:'🧟', lvl:2, hp:11, weakness:'Necrophage Oil', ability:'Death Explosion — deals 3 damage on death to adjacent' },
+  { name:'Arachas',     type:'Insectoid',  icon:'🕷️', lvl:2, hp:13, weakness:'Insectoid Oil', ability:'Web Trap — reduces witcher speed by 1' },
+];
+
+const LOOT_TABLE = [
+  '2 Gold Coins','Trophy Token','Rare Action Card','Mutagen Fragment',
+  'Potion Ingredient','Equipment Fragment','3 Gold Coins','Monster Essence',
+  'Witcher Diagram','Bomb Recipe',
+];
+
+const EVENTS_DB = [
+  { icon:'⚔️',  title:'Ambush!',             desc:'Bandits surround your camp. React or lose resources.',                      effect:'Roll D6 — 1-3: lose 2 coins; 4-6: defeat them and gain 1 trophy token.' },
+  { icon:'🏘️',  title:'Village in Peril',    desc:'Desperate villagers beg for help against a nearby monster.',              effect:'Gain an urgent quest token. Completing it next round awards +3 VP.' },
+  { icon:'🛒',  title:'Mysterious Merchant', desc:'A hooded figure offers exotic goods at suspicious prices.',              effect:'Pay 3 coins to draw 2 extra cards from the action deck.' },
+  { icon:'⛈️',  title:'Violent Storm',       desc:'A fierce storm batters the land, making travel dangerous.',              effect:'All witchers may only move 1 space this round.' },
+  { icon:'⚔️',  title:'Witchers\' Duel',     desc:'Two witchers clash over disputed contract territory.',                   effect:'The two highest-VP witchers must duel. Loser loses 2 VP.' },
+  { icon:'🧪',  title:'Alchemist\'s Cache',  desc:'You discover an abandoned laboratory stocked with reagents.',            effect:'Each witcher takes 1 random potion from the supply.' },
+  { icon:'🌀',  title:'Sign Interference',   desc:'Ancient ley lines disrupt magical focus.',                               effect:'All sign cards cost +1 to play until end of next round.' },
+  { icon:'🐾',  title:'Monster Migration',   desc:'A dangerous herd moves through the region.',                             effect:'Add 2 random monsters to the current location tile.' },
+  { icon:'⚗️',  title:'Trial of Grasses',    desc:'A witcher recalls their brutal transformation.',                         effect:'Active witcher gains 1 mutagen but loses 1 HP.' },
+  { icon:'💀',  title:'Fallen Hero',         desc:'You find the body of a witcher who came before.',                        effect:'Gain 1 random item from the dead witcher\'s equipment pile.' },
+  { icon:'🏛️',  title:'Ancient Ruins',       desc:'Crumbling ruins hold dark secrets and ancient traps.',                  effect:'Roll D6 — 1-2: trap springs (−3 HP); 3-4: nothing; 5-6: treasure (+3 coins).' },
+  { icon:'👑',  title:'Noble\'s Request',    desc:'A noble demands a dangerous escort across enemy territory.',             effect:'Gain 5 coins immediately. Must guard them for 2 rounds — skip attack if threatened.' },
+  { icon:'🌙',  title:'Blood Moon',          desc:'A crimson moon rises, strengthening cursed creatures.',                  effect:'All Cursed One monsters gain +2 HP and +1 attack this round.' },
+  { icon:'🍄',  title:'Herbalist\'s Gift',   desc:'A kind herbalist shares her knowledge and stores.',                     effect:'Active witcher gains 2 potion ingredients and learns a new potion recipe.' },
+  { icon:'🔥',  title:'Forest Fire',         desc:'Wildfire sweeps through the forest tile.',                              effect:'All witchers on forest tiles take 2 damage. Forest tiles become impassable.' },
+];
+
+/* =====================================================
+   DEFAULT MODELS
+   ===================================================== */
+
+const newPlayer = () => ({
+  id: Date.now() + Math.random(),
+  name: 'Witcher',
+  school: 'Wolf',
+  level: 1,
+  coins: 0,
+  victoryPoints: 0,
+  health: 14,
+  maxHealth: 14,
+  shields: 0,
+  potions: 0,
+  trophies: 0,
+  mutagens: 0,
+  starterCards: [],
+  purchasedCards: [],
+  removedCards: [],
+  questsCompleted: 0,
+  combatWins: 0,
+});
+
+const newState = () => ({
+  players: [],
+  activeId: null,
+  combat: { enemy:'', enemyLevel:1, enemyHealth:10, damageDealt:0, damageReceived:0, notes:'' },
+  meditation: { count:0, effects:'', notes:'', log:[] },
+  quests: [],
+  world: { round:1, location:'', conditions:'', monsters:[], trophies:[] },
+  potions: [],
+  trophyCollection: [],
+  notes: '',
+  diceHistory: [],
+});
+
+/* =====================================================
+   UNDO MANAGER
+   ===================================================== */
+
+const Undo = (() => {
+  let stack = [];
+  const MAX = 60;
+  const btn = () => document.getElementById('undo-btn');
+  return {
+    push(state) {
+      stack.push(JSON.stringify(state));
+      if (stack.length > MAX) stack.shift();
+      btn().disabled = false;
+    },
+    pop() {
+      if (!stack.length) return null;
+      const s = JSON.parse(stack.pop());
+      if (!stack.length) btn().disabled = true;
+      return s;
+    },
+    clear() { stack = []; btn().disabled = true; },
+  };
+})();
+
+/* =====================================================
+   UI HELPERS
+   ===================================================== */
+
+const UI = {
+  toggleCard(hdr) { hdr.parentElement.classList.toggle('collapsed'); },
+
+  itab(btn, panelId) {
+    const body = btn.closest('.card-body') || btn.closest('.section');
+    body.querySelectorAll('.itab').forEach(b => b.classList.remove('active'));
+    body.querySelectorAll('.itab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(panelId).classList.add('active');
+  },
+
+  toast(msg, type = '') {
+    const c = document.getElementById('toasts');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.textContent = msg;
+    c.appendChild(t);
+    setTimeout(() => t.remove(), 3200);
+  },
+
+  confirm(title, msg) {
+    return new Promise(res => {
+      const ov = document.getElementById('confirm-overlay');
+      document.getElementById('cfm-title').textContent = title;
+      document.getElementById('cfm-msg').textContent = msg;
+      ov.classList.add('open');
+      const yes = document.getElementById('cfm-yes');
+      const no  = document.getElementById('cfm-no');
+      const close = (v) => { ov.classList.remove('open'); yes.onclick = no.onclick = null; res(v); };
+      yes.onclick = () => close(true);
+      no.onclick  = () => close(false);
+    });
+  },
+
+  si(id) { return document.getElementById(id); },
+  set(id, v) { const el = document.getElementById(id); if (el) el.textContent = v; },
+  val(id, v) { const el = document.getElementById(id); if (el && el.value !== v) el.value = v; },
+};
+
+/* =====================================================
+   MAIN APP
+   ===================================================== */
+
+const App = (() => {
+  let S = newState();
+
+  // ── persistence ──
+  const STORE_KEY = 'witcher_ow_v2';
+  function save() { localStorage.setItem(STORE_KEY, JSON.stringify(S)); }
+  function load() {
+    try { const d = localStorage.getItem(STORE_KEY); if (d) S = { ...newState(), ...JSON.parse(d) }; }
+    catch(e) { S = newState(); }
+  }
+  function snap() { Undo.push(JSON.parse(JSON.stringify(S))); }
+
+  // ── getters ──
+  function activePlayer() { return S.players.find(p => p.id === S.activeId) || null; }
+
+  // ── full re-render ──
+  function renderAll() {
+    renderPlayers(); renderDashboard(); renderCards(); renderCombat();
+    renderMeditation(); renderQuests(); renderWorld(); renderPotions();
+    renderTrophies(); renderStats(); renderNotes();
+    UI.val('notes-ta', S.notes || '');
+  }
+
+  /* ── NAVIGATION ── */
+  function nav(sec) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById(`sec-${sec}`).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.sec === sec));
+    if (sec === 'stats') renderStats();
+  }
+
+  /* ══════════════════════════════════════════════════
+     PLAYER MANAGEMENT
+  ══════════════════════════════════════════════════ */
+  function addPlayer() {
+    const name   = (UI.si('np-name').value.trim() || 'Witcher').slice(0, 28);
+    const school = UI.si('np-school').value;
+    snap();
+    const p = newPlayer(); p.name = name; p.school = school;
+    S.players.push(p);
+    if (!S.activeId) S.activeId = p.id;
+    UI.si('np-name').value = '';
+    save(); renderPlayers(); renderDashboard(); renderCards(); renderStats();
+    UI.toast(`${name} of the ${school} School joined the hunt!`, 'ok');
+  }
+
+  function removePlayer(id) {
+    UI.confirm('Remove Witcher', 'Remove this witcher and all their data?').then(ok => {
+      if (!ok) return;
+      snap();
+      S.players = S.players.filter(p => p.id !== id);
+      if (S.activeId === id) S.activeId = S.players[0]?.id ?? null;
+      save(); renderPlayers(); renderDashboard(); renderCards(); renderStats();
+    });
+  }
+
+  function selectPlayer(id) {
+    S.activeId = id; save(); renderPlayers(); renderDashboard();
+  }
+
+  function renamePlayer(id) {
+    const p = S.players.find(x => x.id === id); if (!p) return;
+    const n = prompt('New witcher name:', p.name)?.trim();
+    if (n) { snap(); p.name = n; save(); renderPlayers(); renderDashboard(); renderStats(); }
+  }
+
+  function renderPlayers() {
+    const el = UI.si('player-list');
+    if (!S.players.length) { el.innerHTML = '<div class="empty-msg">No witchers yet — add one above!</div>'; return; }
+    el.innerHTML = S.players.map(p => `
+      <div class="ptab ${p.id === S.activeId ? 'active' : ''}" onclick="App.selectPlayer(${p.id})">
+        ${SCHOOLS[p.school]||'⚔'} ${p.name}
+        <span class="text-muted" style="font-size:.7rem;">Lv.${p.level}</span>
+        <button class="ptab-x" onclick="event.stopPropagation();App.renamePlayer(${p.id})" title="Rename">✏️</button>
+        <button class="ptab-x" onclick="event.stopPropagation();App.removePlayer(${p.id})" title="Remove">✕</button>
+      </div>`).join('');
+  }
+
+  /* ══════════════════════════════════════════════════
+     DASHBOARD
+  ══════════════════════════════════════════════════ */
+  function adjStat(id, stat, d) {
+    const p = S.players.find(x => x.id === id); if (!p) return;
+    snap();
+    const mins = { health:0, maxHealth:1, level:1 };
+    const maxs = { health: p.maxHealth };
+    const mn = mins[stat] ?? 0;
+    const mx = maxs[stat] ?? 9999;
+    p[stat] = Math.max(mn, Math.min(mx, (p[stat] || 0) + d));
+    if (stat === 'maxHealth' && p.health > p.maxHealth) p.health = p.maxHealth;
+    save(); renderDashboard(); renderStats();
+  }
+
+  function renderDashboard() {
+    const root = UI.si('dashboard-root');
+    if (!S.players.length) { root.innerHTML = '<div class="card"><div class="card-body"><div class="empty-msg">Add players to see dashboard!</div></div></div>'; return; }
+    root.innerHTML = S.players.map(p => playerCard(p)).join('');
+  }
+
+  function sc(label, icon, val, id, delta, tip='') {
+    return `<div class="stat-card" ${tip ? `data-tip="${tip}"` : ''}>
+      <span class="sc-icon">${icon}</span>
+      <div class="sc-label">${label}</div>
+      <div class="stat-row">
+        <button class="ic-btn minus" onclick="App.adjStat(${id},'${delta}',-1)">−</button>
+        <div class="stat-val">${val}</div>
+        <button class="ic-btn plus"  onclick="App.adjStat(${id},'${delta}',1)">+</button>
+      </div>
+    </div>`;
+  }
+
+  function playerCard(p) {
+    const pct = p.maxHealth > 0 ? (p.health / p.maxHealth * 100) : 0;
+    const isActive = p.id === S.activeId;
+    return `<div class="card" style="${isActive ? 'border-color:var(--gold-dark);' : ''}">
+      <div class="card-header" onclick="UI.toggleCard(this)">
+        <div class="flex ai-c gap-md">
+          <div class="school-badge">${SCHOOLS[p.school]||'⚔'}</div>
+          <div>
+            <span style="color:var(--gold);font-size:1rem;">${p.name}</span>
+            <span class="text-sec" style="font-size:.75rem;display:block;">${p.school} School · Level ${p.level}</span>
+          </div>
+          ${isActive ? '<span class="badge">Active</span>' : ''}
+        </div>
+        <span class="collapse-icon">▼</span>
+      </div>
+      <div class="card-body">
+        <div class="flex jc-sb ai-c mb1">
+          <span class="text-red">❤ ${p.health} / ${p.maxHealth} HP</span>
+          <span class="text-gold">⭐ ${p.victoryPoints} VP</span>
+        </div>
+        <div class="hp-bar-bg"><div class="hp-bar" style="width:${pct}%"></div></div>
+        <div class="gauto mt2">
+          ${sc('Level','⚔',p.level,p.id,'level','Character level')}
+          ${sc('Coins','💰',p.coins,p.id,'coins','Gold coins')}
+          ${sc('Victory Pts','⭐',p.victoryPoints,p.id,'victoryPoints','Victory points')}
+          ${sc('Health','❤',p.health,p.id,'health','Current HP')}
+          ${sc('Max HP','💗',p.maxHealth,p.id,'maxHealth','Maximum health')}
+          ${sc('Shields','🛡',p.shields,p.id,'shields','Shield tokens')}
+          ${sc('Potions','🧪',p.potions,p.id,'potions','Potion count')}
+          ${sc('Trophies','🏆',p.trophies,p.id,'trophies','Monster trophies')}
+          ${sc('Mutagens','🔮',p.mutagens,p.id,'mutagens','Mutagen tokens')}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  /* ══════════════════════════════════════════════════
+     COMBAT
+  ══════════════════════════════════════════════════ */
+  function saveCombat() {
+    S.combat.enemy = (UI.si('c-enemy')?.value || '');
+    S.combat.notes = (UI.si('c-notes')?.value || '');
+    save();
+  }
+
+  function combatAdj(field, d) {
+    snap(); S.combat[field] = Math.max(0, (S.combat[field] || 0) + d);
+    save(); renderCombat();
+  }
+
+  function quickHP(d) {
+    const p = activePlayer();
+    if (!p) { UI.toast('Select a player first!', 'err'); return; }
+    snap();
+    p.health = Math.max(0, Math.min(p.maxHealth, p.health + d));
+    save(); renderDashboard();
+    UI.toast(`${p.name}: ${d>0?'+':''}${d} HP → ${p.health}/${p.maxHealth}`, d>0?'ok':'err');
+  }
+
+  function resetCombat() {
+    UI.confirm('End Combat', 'Clear all combat data?').then(ok => {
+      if (!ok) return;
+      snap();
+      S.combat = { enemy:'', enemyLevel:1, enemyHealth:10, damageDealt:0, damageReceived:0, notes:'' };
+      save(); renderCombat(); UI.toast('Combat cleared', 'ok');
+    });
+  }
+
+  function renderCombat() {
+    const c = S.combat;
+    UI.set('c-elevel', c.enemyLevel); UI.set('c-ehealth', c.enemyHealth);
+    UI.set('c-ehp-big', `❤ ${c.enemyHealth}`);
+    UI.set('c-dd', c.damageDealt); UI.set('c-dr', c.damageReceived);
+    UI.val('c-enemy', c.enemy); UI.val('c-notes', c.notes);
+  }
+
+  /* ══════════════════════════════════════════════════
+     CARD DECK
+  ══════════════════════════════════════════════════ */
+  function addCard(pid, type) {
+    const p = S.players.find(x => x.id === pid); if (!p) return;
+    const key = { starter:'starterCards', purchased:'purchasedCards', removed:'removedCards' }[type];
+    const inp = UI.si(`cd-${type}-${pid}`);
+    const name = inp?.value.trim(); if (!name) return;
+    snap(); if (!p[key]) p[key] = []; p[key].push(name);
+    inp.value = ''; save(); renderCards();
+  }
+
+  function removeCard(pid, type, idx) {
+    const p = S.players.find(x => x.id === pid); if (!p) return;
+    const key = { starter:'starterCards', purchased:'purchasedCards', removed:'removedCards' }[type];
+    snap(); p[key].splice(idx, 1); save(); renderCards();
+  }
+
+  function deckSection(p, type, label, icon, btnCls) {
+    const key = { starter:'starterCards', purchased:'purchasedCards', removed:'removedCards' }[type];
+    const cards = p[key] || [];
+    const items = cards.length
+      ? cards.map((c,i) => `<div class="list-item" ${type==='removed'?'style="opacity:.55;text-decoration:line-through;"':''}><span>🃏 ${c}</span><button class="li-x" onclick="App.removeCard(${p.id},'${type}',${i})">✕</button></div>`).join('')
+      : `<div class="empty-msg">No ${label.toLowerCase()}</div>`;
+    return `<div>
+      <h4 style="color:var(--gold);margin-bottom:.5rem;">${icon} ${label} <span class="badge">${cards.length}</span></h4>
+      <div class="flex gap-xs mb1">
+        <input type="text" id="cd-${type}-${p.id}" placeholder="Card name…" class="f1" onkeydown="if(event.key==='Enter')App.addCard(${p.id},'${type}')">
+        <button class="btn ${btnCls} btn-sm" onclick="App.addCard(${p.id},'${type}')">+</button>
+      </div>
+      <div class="scrollable">${items}</div>
+    </div>`;
+  }
+
+  function renderCards() {
+    const root = UI.si('cards-root');
+    if (!S.players.length) { root.innerHTML = '<div class="empty-msg">Add players first!</div>'; return; }
+    root.innerHTML = S.players.map(p => {
+      const total = (p.starterCards?.length||0) + (p.purchasedCards?.length||0);
+      return `<div class="card mb2">
+        <div class="card-header" onclick="UI.toggleCard(this)">
+          <h3>${SCHOOLS[p.school]||'⚔'} ${p.name}'s Deck — <span style="color:var(--text-sec);">${total} cards in deck</span></h3>
+          <span class="collapse-icon">▼</span>
+        </div>
+        <div class="card-body">
+          <div class="g3">
+            ${deckSection(p,'starter','Starter Cards','🃏','btn-ghost')}
+            ${deckSection(p,'purchased','Purchased Cards','✨','btn-gold')}
+            ${deckSection(p,'removed','Removed Cards','🗑','btn-danger')}
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  /* ══════════════════════════════════════════════════
+     MEDITATION
+  ══════════════════════════════════════════════════ */
+  function meditAdj(d) { snap(); S.meditation.count = Math.max(0, S.meditation.count + d); save(); UI.set('m-count', S.meditation.count); }
+  function saveMedit() { S.meditation.effects = UI.si('m-effects')?.value||''; S.meditation.notes = UI.si('m-notes')?.value||''; save(); }
+  function logMedit() {
+    const p = activePlayer();
+    if (!S.meditation.log) S.meditation.log = [];
+    S.meditation.log.unshift({ time: new Date().toLocaleString(), player: p?.name||'Unknown', count: S.meditation.count, effects: S.meditation.effects });
+    if (p) { p.meditationsCount = (p.meditationsCount||0) + 1; }
+    save(); renderMeditLog(); UI.toast('Meditation logged!', 'ok');
+  }
+  function renderMeditation() {
+    UI.set('m-count', S.meditation.count);
+    UI.val('m-effects', S.meditation.effects||'');
+    UI.val('m-notes', S.meditation.notes||'');
+    renderMeditLog();
+  }
+  function renderMeditLog() {
+    const log = S.meditation.log || [];
+    const el = UI.si('m-log');
+    if (!log.length) { el.innerHTML=''; return; }
+    el.innerHTML = '<h4 class="text-gold mb1">Meditation Log</h4>' +
+      log.slice(0,15).map(e => `<div class="list-item"><span>🌙 <strong>${e.player}</strong> — ${e.effects||'No effects noted'}</span><span class="text-muted" style="font-size:.7rem;">${e.time}</span></div>`).join('');
+  }
+
+  /* ══════════════════════════════════════════════════
+     QUESTS
+  ══════════════════════════════════════════════════ */
+  function addQuest() {
+    const name = UI.si('q-name').value.trim(); if (!name) return;
+    const reward = UI.si('q-reward').value.trim();
+    snap();
+    S.quests.push({ id: Date.now(), name, reward, done: false, added: new Date().toLocaleDateString(), completedAt: null });
+    UI.si('q-name').value = ''; UI.si('q-reward').value = '';
+    save(); renderQuests(); UI.toast('Quest added!', 'ok');
+  }
+
+  function toggleQuest(id) {
+    const q = S.quests.find(x => x.id === id); if (!q) return;
+    snap(); q.done = !q.done;
+    if (q.done) {
+      q.completedAt = new Date().toLocaleDateString();
+      const p = activePlayer(); if (p) p.questsCompleted = (p.questsCompleted||0)+1;
+    } else { q.completedAt = null; }
+    save(); renderQuests(); renderStats();
+  }
+
+  function removeQuest(id) {
+    snap(); S.quests = S.quests.filter(q => q.id !== id); save(); renderQuests();
+  }
+
+  function renderQuestList(quests, containerId) {
+    const el = UI.si(containerId);
+    if (!quests.length) { el.innerHTML = '<div class="empty-msg">None</div>'; return; }
+    el.innerHTML = quests.map(q => `
+      <div class="quest-item ${q.done?'done':''}">
+        <input type="checkbox" ${q.done?'checked':''} onchange="App.toggleQuest(${q.id})" style="margin-top:.2rem;">
+        <div class="f1">
+          <div class="qi-name">${q.name}</div>
+          ${q.reward ? `<div class="qi-reward">💰 ${q.reward}</div>` : ''}
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div class="qi-date">${q.completedAt||q.added}</div>
+          <button class="li-x" onclick="App.removeQuest(${q.id})">✕</button>
+        </div>
+      </div>`).join('');
+  }
+
+  function renderQuests() {
+    renderQuestList(S.quests.filter(q=>!q.done), 'q-active');
+    renderQuestList(S.quests.filter(q=>q.done),  'q-done');
+  }
+
+  /* ══════════════════════════════════════════════════
+     WORLD
+  ══════════════════════════════════════════════════ */
+  function worldAdj(field, d) {
+    snap(); S.world[field] = Math.max(1, (S.world[field]||1) + d); save(); renderWorld();
+  }
+  function saveWorld() {
+    S.world.location   = UI.si('w-location')?.value||'';
+    S.world.conditions = UI.si('w-conditions')?.value||'';
+    const badge = UI.si('w-loc-badge');
+    if (badge) badge.textContent = `📍 ${S.world.location || 'Unknown'}`;
+    save();
+  }
+  function addWorldMonster() {
+    const inp = UI.si('w-monster-in'); const name = inp.value.trim(); if (!name) return;
+    snap(); S.world.monsters.push({ id:Date.now(), name }); inp.value=''; save(); renderWorldMonsters();
+  }
+  function removeWorldMonster(id) {
+    snap(); S.world.monsters = S.world.monsters.filter(m=>m.id!==id); save(); renderWorldMonsters();
+  }
+  function addWorldTrophy() {
+    const inp = UI.si('w-trophy-in'); const name = inp.value.trim(); if (!name) return;
+    snap(); S.world.trophies.push({ id:Date.now(), name }); inp.value=''; save(); renderWorldTrophies();
+  }
+  function removeWorldTrophy(id) {
+    snap(); S.world.trophies = S.world.trophies.filter(t=>t.id!==id); save(); renderWorldTrophies();
+  }
+  function renderWorld() {
+    UI.set('w-round', S.world.round||1);
+    UI.val('w-location', S.world.location||'');
+    UI.val('w-conditions', S.world.conditions||'');
+    const badge = UI.si('w-loc-badge');
+    if (badge) badge.textContent = `📍 ${S.world.location||'Unknown'}`;
+    renderWorldMonsters(); renderWorldTrophies();
+  }
+  function renderWorldMonsters() {
+    const el = UI.si('w-monsters'); const ms = S.world.monsters||[];
+    el.innerHTML = ms.length ? ms.map(m=>`<div class="list-item"><span>👾 ${m.name}</span><button class="li-x" onclick="App.removeWorldMonster(${m.id})">✕</button></div>`).join('') : '<div class="empty-msg">None</div>';
+  }
+  function renderWorldTrophies() {
+    const el = UI.si('w-trophies'); const ts = S.world.trophies||[];
+    el.innerHTML = ts.length ? ts.map(t=>`<div class="list-item"><span>🏆 ${t.name}</span><button class="li-x" onclick="App.removeWorldTrophy(${t.id})">✕</button></div>`).join('') : '<div class="empty-msg">None</div>';
+  }
+
+  /* ══════════════════════════════════════════════════
+     POTIONS
+  ══════════════════════════════════════════════════ */
+  function addPotion() {
+    const name = UI.si('pot-name').value.trim(); if (!name) return;
+    const effect = UI.si('pot-effect').value.trim();
+    const icon   = UI.si('pot-icon').value;
+    snap();
+    S.potions.push({ id:Date.now(), name, effect, icon, qty:1 });
+    UI.si('pot-name').value=''; UI.si('pot-effect').value='';
+    save(); renderPotions(); UI.toast(`${name} added to inventory!`, 'ok');
+  }
+
+  function adjPotion(id, d) {
+    const p = S.potions.find(x=>x.id===id); if (!p) return;
+    snap(); p.qty = Math.max(0, (p.qty||1)+d);
+    if (p.qty === 0) {
+      UI.confirm('Remove Potion', `Remove all ${p.name} from inventory?`).then(ok => {
+        if (ok) { S.potions = S.potions.filter(x=>x.id!==id); }
+        else { p.qty = 1; }
+        save(); renderPotions();
+      });
+      return;
+    }
+    save(); renderPotions();
+  }
+
+  function renderPotions() {
+    const el = UI.si('pot-list'); const ps = S.potions||[];
+    if (!ps.length) { el.innerHTML='<div class="empty-msg">No potions in inventory — add one above!</div>'; return; }
+    el.innerHTML = ps.map(p=>`
+      <div class="potion-item">
+        <span class="potion-icon">${p.icon||'🧪'}</span>
+        <div class="potion-info f1">
+          <div class="p-name">${p.name}</div>
+          <div class="p-effect">${p.effect||'No effect noted'}</div>
+        </div>
+        <div class="stat-row">
+          <button class="ic-btn minus" onclick="App.adjPotion(${p.id},-1)">−</button>
+          <div class="stat-val">${p.qty||1}</div>
+          <button class="ic-btn plus"  onclick="App.adjPotion(${p.id},1)">+</button>
+        </div>
+      </div>`).join('');
+  }
+
+  /* ══════════════════════════════════════════════════
+     TROPHIES
+  ══════════════════════════════════════════════════ */
+  function addTrophy() {
+    const name    = UI.si('tr-name').value.trim(); if (!name) return;
+    const monster = UI.si('tr-monster').value.trim();
+    const icon    = UI.si('tr-icon').value;
+    snap();
+    S.trophyCollection.push({ id:Date.now(), name, monster, icon, date:new Date().toLocaleDateString() });
+    UI.si('tr-name').value=''; UI.si('tr-monster').value='';
+    save(); renderTrophies(); UI.toast('Trophy added!', 'ok');
+  }
+
+  function removeTrophy(id) {
+    snap(); S.trophyCollection = S.trophyCollection.filter(t=>t.id!==id); save(); renderTrophies();
+  }
+
+  function renderTrophies() {
+    const el = UI.si('trophy-gallery'); const ts = S.trophyCollection||[];
+    if (!ts.length) { el.innerHTML='<div class="empty-msg" style="grid-column:1/-1;">No trophies yet — start hunting!</div>'; return; }
+    el.innerHTML = ts.map(t=>`
+      <div class="trophy-card">
+        <span class="tc-icon">${t.icon||'🏆'}</span>
+        <div class="tc-name">${t.name}</div>
+        ${t.monster?`<div class="tc-sub">${t.monster}</div>`:''}
+        <div class="tc-sub">${t.date}</div>
+        <button class="tc-x" onclick="App.removeTrophy(${t.id})">✕</button>
+      </div>`).join('');
+  }
+
+  /* ══════════════════════════════════════════════════
+     DICE
+  ══════════════════════════════════════════════════ */
+  const D6_FACES = ['','⚀','⚁','⚂','⚃','⚄','⚅'];
+
+  function rollOne(sides) { rollDice([{ sides, result: rand(sides) }]); }
+
+  function rollMany() {
+    const n = parseInt(UI.si('dice-n').value)||1;
+    const s = parseInt(UI.si('dice-s').value)||6;
+    rollDice(Array.from({length:n}, ()=>({ sides:s, result:rand(s) })));
+  }
+
+  function rand(n) { return Math.floor(Math.random()*n)+1; }
+
+  function rollDice(rolls) {
+    const el = UI.si('dice-display');
+    el.innerHTML = rolls.map(r=>`
+      <div class="die rolling">
+        <span class="die-val">${r.sides===6?D6_FACES[r.result]||r.result:r.result}</span>
+        <span class="die-label">D${r.sides}</span>
+      </div>`).join('');
+    setTimeout(()=>el.querySelectorAll('.die').forEach(d=>d.classList.remove('rolling')), 500);
+    const total = rolls.reduce((a,r)=>a+r.result,0);
+    const label = rolls.length===1 ? `D${rolls[0].sides}: ${rolls[0].result}` : `${rolls.length}D${rolls[0].sides} [${rolls.map(r=>r.result).join(', ')}] = ${total}`;
+    if (!S.diceHistory) S.diceHistory=[];
+    S.diceHistory.unshift({ label, time:new Date().toLocaleTimeString() });
+    if (S.diceHistory.length>25) S.diceHistory.pop();
+    save(); renderDiceHistory();
+  }
+
+  function renderDiceHistory() {
+    const el = UI.si('dice-history'); const h = S.diceHistory||[];
+    el.innerHTML = h.length
+      ? h.map(e=>`<div class="list-item"><span class="text-gold">🎲 ${e.label}</span><span class="text-muted" style="font-size:.72rem;">${e.time}</span></div>`).join('')
+      : '<div class="empty-msg">Roll the dice!</div>';
+  }
+
+  /* ══════════════════════════════════════════════════
+     RANDOM GENERATORS
+  ══════════════════════════════════════════════════ */
+  function genMonster() {
+    const m = MONSTERS_DB[Math.floor(Math.random()*MONSTERS_DB.length)];
+    const loot = LOOT_TABLE[Math.floor(Math.random()*LOOT_TABLE.length)];
+    UI.si('monster-result').innerHTML = `
+      <div class="monster-card">
+        <div style="font-size:3rem;">${m.icon}</div>
+        <h3>${m.name}</h3>
+        <span class="badge" style="display:inline-block;margin-bottom:.75rem;">${m.type}</span>
+        <div class="g2" style="text-align:left;margin-bottom:.5rem;">
+          <div><span class="text-sec">Level:</span> ${m.lvl}</div>
+          <div><span class="text-sec">HP:</span> <span class="text-red">❤ ${m.hp}</span></div>
+          <div style="grid-column:1/-1;"><span class="text-sec">Weakness:</span> ${m.weakness}</div>
+        </div>
+        <div class="monster-ability">⚡ ${m.ability}</div>
+        <div style="margin-top:.75rem;color:var(--gold);font-size:.82rem;">🎁 Potential Loot: ${loot}</div>
+      </div>`;
+  }
+
+  function genEvent() {
+    const e = EVENTS_DB[Math.floor(Math.random()*EVENTS_DB.length)];
+    UI.si('event-result').innerHTML = `
+      <div class="event-card">
+        <div style="font-size:2.5rem;">${e.icon}</div>
+        <h3>${e.title}</h3>
+        <p class="text-sec" style="font-size:.85rem;">${e.desc}</p>
+        <div class="event-effect">📋 ${e.effect}</div>
+      </div>`;
+  }
+
+  /* ══════════════════════════════════════════════════
+     STATISTICS
+  ══════════════════════════════════════════════════ */
+  function renderStats() {
+    const el = UI.si('stats-root');
+    if (!S.players.length) { el.innerHTML='<div class="empty-msg">Add players to see statistics!</div>'; return; }
+
+    const totalQ   = S.quests.length;
+    const doneQ    = S.quests.filter(q=>q.done).length;
+    const trophyN  = S.trophyCollection?.length||0;
+    const potionN  = (S.potions||[]).reduce((a,p)=>a+(p.qty||1),0);
+    const maxVP    = Math.max(...S.players.map(p=>p.victoryPoints),1);
+
+    const sorted = [...S.players].sort((a,b)=>b.victoryPoints-a.victoryPoints);
+    const medals = ['🥇','🥈','🥉'];
+
+    el.innerHTML = `
+      <div class="g4 mb2">
+        <div class="stat-card"><span class="sc-icon">🗺️</span><div class="sc-label">Round</div><div class="stat-val" style="font-size:1.3rem;">${S.world.round||1}</div></div>
+        <div class="stat-card"><span class="sc-icon">📜</span><div class="sc-label">Quests Done</div><div class="stat-val" style="font-size:1.1rem;">${doneQ}/${totalQ}</div></div>
+        <div class="stat-card"><span class="sc-icon">🏆</span><div class="sc-label">Trophies</div><div class="stat-val" style="font-size:1.3rem;">${trophyN}</div></div>
+        <div class="stat-card"><span class="sc-icon">🧪</span><div class="sc-label">Potions</div><div class="stat-val" style="font-size:1.3rem;">${potionN}</div></div>
+      </div>
+      <hr class="divider">
+      <h4 class="text-gold mb2">Player Leaderboard</h4>
+      ${sorted.map((p,i)=>{
+        const pct = (p.victoryPoints/maxVP*100);
+        return `<div class="card mb1">
+          <div class="card-body" style="padding:.75rem;">
+            <div class="flex jc-sb ai-c mb1">
+              <div class="flex ai-c gap-md">
+                <span style="font-size:1.5rem;">${medals[i]||`#${i+1}`}</span>
+                <div>
+                  <div><strong>${SCHOOLS[p.school]||'⚔'} ${p.name}</strong></div>
+                  <div class="text-muted" style="font-size:.72rem;">${p.school} School · Lv.${p.level}</div>
+                </div>
+              </div>
+              <div style="text-align:right;">
+                <div class="text-gold">⭐ ${p.victoryPoints} VP</div>
+                <div class="text-muted" style="font-size:.72rem;">❤ ${p.health}/${p.maxHealth}</div>
+              </div>
+            </div>
+            <div class="sbar-bg"><div class="sbar" style="width:${pct}%"></div></div>
+            <div class="g4 mt1" style="font-size:.72rem;">
+              <div class="text-muted">💰 ${p.coins} coins</div>
+              <div class="text-muted">🏆 ${p.trophies} trophies</div>
+              <div class="text-muted">🔮 ${p.mutagens} mutagens</div>
+              <div class="text-muted">📜 ${p.questsCompleted||0} quests</div>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}`;
+  }
+
+  /* ══════════════════════════════════════════════════
+     NOTES
+  ══════════════════════════════════════════════════ */
+  function saveNotes() { S.notes = UI.si('notes-ta')?.value||''; save(); }
+  function renderNotes() { UI.val('notes-ta', S.notes||''); }
+  function clearNotes() {
+    UI.confirm('Clear Notes', 'Clear all campaign notes?').then(ok=>{
+      if (!ok) return;
+      snap(); S.notes=''; save(); renderNotes(); UI.toast('Notes cleared','ok');
+    });
+  }
+
+  /* ══════════════════════════════════════════════════
+     IMPORT / EXPORT / RESET
+  ══════════════════════════════════════════════════ */
+  function exportData() {
+    const blob = new Blob([JSON.stringify(S, null, 2)], {type:'application/json'});
+    const url  = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `witcher-ow-${new Date().toISOString().slice(0,10)}.json`;
+    a.click(); URL.revokeObjectURL(url);
+    UI.toast('Game data exported!', 'ok');
+  }
+
+  function importData(ev) {
+    const file = ev.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const data = JSON.parse(e.target.result);
+        UI.confirm('Import Data', 'Replace all current data with the imported file?').then(ok=>{
+          if (!ok) return;
+          snap(); S = {...newState(), ...data};
+          save(); renderAll(); UI.toast('Game data imported!', 'ok');
+        });
+      } catch { UI.toast('Invalid JSON file!', 'err'); }
+    };
+    reader.readAsText(file);
+    ev.target.value='';
+  }
+
+  function confirmReset() {
+    UI.confirm('Reset Campaign', 'Delete ALL game data permanently? This cannot be undone!').then(ok=>{
+      if (!ok) return;
+      S = newState(); Undo.clear(); save(); renderAll();
+      UI.toast('Campaign reset!', 'ok');
+    });
+  }
+
+  /* ══════════════════════════════════════════════════
+     UNDO
+  ══════════════════════════════════════════════════ */
+  function undo() {
+    const prev = Undo.pop(); if (!prev) return;
+    S = prev; save(); renderAll(); UI.toast('Action undone', 'ok');
+  }
+
+  /* ══════════════════════════════════════════════════
+     SEARCH
+  ══════════════════════════════════════════════════ */
+  function search(q) {
+    const targets = document.querySelectorAll('.list-item,.quest-item,.potion-item,.trophy-card,.card');
+    if (!q.trim()) { targets.forEach(el=>el.style.display=''); return; }
+    const lq = q.toLowerCase();
+    targets.forEach(el=>{
+      const match = el.textContent.toLowerCase().includes(lq);
+      el.style.display = match ? '' : 'none';
+    });
+  }
+
+  /* ══════════════════════════════════════════════════
+     INIT
+  ══════════════════════════════════════════════════ */
+  function init() {
+    load(); renderAll();
+    // Restore dice history display
+    renderDiceHistory();
+  }
+
+  /* ── public interface ── */
+  return {
+    init, nav, undo, search, exportData, importData, confirmReset,
+    addPlayer, removePlayer, selectPlayer, renamePlayer,
+    adjStat, addCard, removeCard,
+    saveCombat, combatAdj, quickHP, resetCombat,
+    meditAdj, saveMedit, logMedit,
+    addQuest, toggleQuest, removeQuest,
+    worldAdj, saveWorld, addWorldMonster, removeWorldMonster, addWorldTrophy, removeWorldTrophy,
+    addPotion, adjPotion,
+    addTrophy, removeTrophy,
+    rollOne, rollMany,
+    genMonster, genEvent,
+    saveNotes, clearNotes,
+  };
+})();
+
+/* ── bootstrap ── */
+document.addEventListener('DOMContentLoaded', () => App.init());
+</script>
+</body>
+</html>
