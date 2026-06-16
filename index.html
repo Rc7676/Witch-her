@@ -638,6 +638,219 @@ hr.gold { border-color:var(--gold-dim); }
 
 /* Search highlight */
 .hl { background:rgba(201,168,76,.25); border-radius:2px; }
+
+/* =====================================================
+   GUIDE STYLES
+   ===================================================== */
+.guide-toc { margin-bottom:.5rem; }
+.toc-grid {
+  display:grid;
+  gap:.35rem;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+}
+.toc-link {
+  background:var(--bg-card-2);
+  border:1px solid var(--border);
+  border-radius:4px;
+  color:var(--text-sec);
+  cursor:pointer;
+  display:block;
+  font-size:.78rem;
+  letter-spacing:.5px;
+  padding:.35rem .65rem;
+  transition:all var(--transition);
+  text-decoration:none;
+}
+.toc-link:hover { background:var(--gold-dim); border-color:var(--gold-dark); color:var(--gold-light); }
+
+.guide-num {
+  background:var(--gold-dim);
+  border:1px solid var(--gold-dark);
+  border-radius:4px;
+  color:var(--gold);
+  display:inline-block;
+  font-size:.7rem;
+  margin-right:.5rem;
+  padding:.1rem .45rem;
+}
+
+.guide-entry { scroll-margin-top:130px; }
+.guide-entry.hidden { display:none; }
+
+.guide-intro {
+  background:linear-gradient(90deg,#1a1200,#0e0e0e);
+  border-left:3px solid var(--gold-dark);
+  border-radius:4px;
+  margin-bottom:1rem;
+  padding:.75rem 1rem;
+  font-size:.9rem;
+  line-height:1.7;
+}
+
+.guide-rule-box {
+  background:#0e0e0e;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:.75rem 1rem;
+  margin-bottom:.75rem;
+}
+.guide-rule-box h4 { color:var(--gold); font-size:.85rem; margin-bottom:.4rem; }
+.guide-rule-box p,.guide-rule-box li { font-size:.85rem; color:var(--text-sec); line-height:1.65; }
+.guide-rule-box ul,.guide-rule-box ol { padding-left:1.1rem; }
+
+.guide-tip {
+  background:#050f05;
+  border:1px solid #153015;
+  border-radius:4px;
+  color:#7ab87a;
+  font-size:.82rem;
+  line-height:1.6;
+  padding:.6rem .85rem;
+}
+
+.guide-steps { display:flex; flex-direction:column; gap:.6rem; }
+.guide-step {
+  align-items:flex-start;
+  display:flex;
+  gap:.75rem;
+}
+.step-num {
+  align-items:center;
+  background:var(--gold-dark);
+  border-radius:50%;
+  color:var(--gold-light);
+  display:inline-flex;
+  flex-shrink:0;
+  font-size:.75rem;
+  font-weight:bold;
+  height:26px;
+  justify-content:center;
+  margin-top:.1rem;
+  width:26px;
+}
+.guide-step div { font-size:.85rem; color:var(--text-sec); line-height:1.65; }
+.guide-step strong { color:var(--text); }
+
+.guide-list { color:var(--text-sec); font-size:.85rem; line-height:1.8; padding-left:1.1rem; }
+.guide-list li::marker { color:var(--gold-dark); }
+
+.guide-table {
+  border-collapse:collapse;
+  font-size:.8rem;
+  width:100%;
+  margin-bottom:.5rem;
+}
+.guide-table th {
+  background:var(--gold-dim);
+  border:1px solid var(--border-gold);
+  color:var(--gold-light);
+  font-size:.72rem;
+  letter-spacing:.5px;
+  padding:.4rem .6rem;
+  text-align:left;
+  text-transform:uppercase;
+}
+.guide-table td {
+  border:1px solid var(--border);
+  color:var(--text-sec);
+  padding:.35rem .6rem;
+  vertical-align:top;
+  line-height:1.5;
+}
+.guide-table tr:hover td { background:#0f0f0f; }
+.guide-table strong { color:var(--text); }
+
+/* Character cards */
+.guide-char-grid {
+  display:grid;
+  gap:.75rem;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+}
+.char-card {
+  background:#0a0a14;
+  border:1px solid #1a1a3a;
+  border-radius:var(--radius);
+  padding:.85rem;
+}
+.char-card .char-icon { font-size:2rem; margin-bottom:.25rem; }
+.char-card h4 { color:var(--gold-light); font-size:.9rem; margin-bottom:.2rem; }
+.char-card .char-school { color:#6070b0; font-size:.72rem; letter-spacing:1px; text-transform:uppercase; margin-bottom:.5rem; }
+.char-card .char-ability { background:#0e0e18; border-radius:4px; color:var(--text-sec); font-size:.8rem; line-height:1.6; padding:.5rem; margin-bottom:.5rem; }
+.char-card .char-style { color:var(--gold-dark); font-size:.75rem; line-height:1.5; }
+
+/* School cards */
+.guide-school-card {
+  background:#0a0a0a;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:.85rem;
+  transition:border-color var(--transition);
+}
+.guide-school-card:hover { border-color:var(--gold-dark); }
+.guide-school-card h4 { color:var(--gold-light); font-size:.88rem; margin:.25rem 0 .35rem; }
+.guide-school-card p { color:var(--text-sec); font-size:.8rem; line-height:1.6; }
+
+/* Sign cards */
+.sign-card {
+  background:#05050f;
+  border:1px solid #1a1a3a;
+  border-radius:var(--radius);
+  padding:.75rem;
+}
+.sign-card .sign-icon { font-size:1.8rem; display:block; margin-bottom:.25rem; }
+.sign-card h4 { color:#8090e0; font-size:.88rem; margin-bottom:.35rem; }
+.sign-card p { color:var(--text-sec); font-size:.8rem; line-height:1.6; }
+
+/* Action items */
+.action-list { display:flex; flex-direction:column; gap:.6rem; }
+.action-item {
+  align-items:flex-start;
+  background:#0e0e0e;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  display:flex;
+  gap:.85rem;
+  padding:.7rem .85rem;
+  transition:border-color var(--transition);
+}
+.action-item:hover { border-color:var(--border-gold); }
+.action-item .action-icon { font-size:1.5rem; flex-shrink:0; margin-top:.05rem; }
+.action-item h4 { color:var(--gold-light); font-size:.88rem; margin-bottom:.2rem; }
+.action-item p { color:var(--text-sec); font-size:.82rem; line-height:1.6; }
+
+/* Phase blocks */
+.guide-phase {
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  display:flex;
+  gap:1rem;
+  margin-bottom:.65rem;
+  overflow:hidden;
+}
+.phase-label {
+  align-items:center;
+  background:var(--gold-dim);
+  border-right:1px solid var(--border-gold);
+  color:var(--gold);
+  display:flex;
+  flex-shrink:0;
+  font-size:.7rem;
+  font-weight:bold;
+  justify-content:center;
+  letter-spacing:1px;
+  padding:.5rem .65rem;
+  text-transform:uppercase;
+  width:52px;
+  writing-mode:vertical-rl;
+}
+.phase-content { flex:1; padding:.75rem; }
+.phase-content h4 { color:var(--gold-light); font-size:.88rem; margin-bottom:.4rem; }
+.phase-content p,.phase-content li { color:var(--text-sec); font-size:.83rem; line-height:1.65; }
+
+/* Glossary */
+.guide-glossary { display:flex; flex-direction:column; gap:.5rem; }
+.guide-glossary dt { color:var(--gold-light); font-size:.82rem; font-weight:bold; }
+.guide-glossary dd { color:var(--text-sec); font-size:.8rem; margin-left:.75rem; line-height:1.55; }
 </style>
 </head>
 <body>
@@ -691,6 +904,7 @@ hr.gold { border-color:var(--gold-dim); }
   <button class="nav-btn"        data-sec="random"     onclick="App.nav('random')">🎰 Random</button>
   <button class="nav-btn"        data-sec="stats"      onclick="App.nav('stats')">📈 Stats</button>
   <button class="nav-btn"        data-sec="notes"      onclick="App.nav('notes')">📝 Notes</button>
+  <button class="nav-btn"        data-sec="guide"      onclick="App.nav('guide')">📖 Guide</button>
 </nav>
 
 <!-- ═══════════════════════════════════════════════════
@@ -1059,6 +1273,1055 @@ hr.gold { border-color:var(--gold-dim); }
         oninput="App.saveNotes()"></textarea>
     </div>
   </div>
+</section>
+
+<!-- ────────────────────────────────────────────────
+     GUIDE
+──────────────────────────────────────────────── -->
+<section id="sec-guide" class="section">
+
+  <!-- ── Search & TOC ── -->
+  <div class="card">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2>📖 The Witcher: Old World — Complete Rule Guide</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <p class="text-sec" style="font-size:.82rem;margin-bottom:.75rem;">An indexed reference guide to all core rules. Use the search bar above or click any entry in the table of contents to jump to that topic.</p>
+      <div class="flex gap-sm ai-c mb1">
+        <input type="text" id="guide-search" placeholder="🔍 Filter guide topics…" oninput="Guide.filter(this.value)" style="flex:1;">
+        <button class="btn btn-ghost btn-sm" onclick="Guide.filter('');document.getElementById('guide-search').value=''">Clear</button>
+      </div>
+      <!-- Table of contents -->
+      <div id="guide-toc" class="guide-toc">
+        <div class="toc-grid">
+          <a class="toc-link" onclick="Guide.jump('g-overview')">1. Game Overview</a>
+          <a class="toc-link" onclick="Guide.jump('g-components')">2. Components</a>
+          <a class="toc-link" onclick="Guide.jump('g-setup')">3. Setup</a>
+          <a class="toc-link" onclick="Guide.jump('g-witchers')">4. Witcher Characters</a>
+          <a class="toc-link" onclick="Guide.jump('g-schools')">5. Witcher Schools</a>
+          <a class="toc-link" onclick="Guide.jump('g-round')">6. Round Structure</a>
+          <a class="toc-link" onclick="Guide.jump('g-actions')">7. Actions</a>
+          <a class="toc-link" onclick="Guide.jump('g-movement')">8. Movement &amp; Locations</a>
+          <a class="toc-link" onclick="Guide.jump('g-explore')">9. Exploration</a>
+          <a class="toc-link" onclick="Guide.jump('g-training')">10. Training</a>
+          <a class="toc-link" onclick="Guide.jump('g-combat')">11. Monster Combat</a>
+          <a class="toc-link" onclick="Guide.jump('g-cards')">12. Card System</a>
+          <a class="toc-link" onclick="Guide.jump('g-signs')">13. Signs</a>
+          <a class="toc-link" onclick="Guide.jump('g-potions')">14. Potions &amp; Alchemy</a>
+          <a class="toc-link" onclick="Guide.jump('g-quests')">15. Quests &amp; Contracts</a>
+          <a class="toc-link" onclick="Guide.jump('g-leveling')">16. Leveling Up</a>
+          <a class="toc-link" onclick="Guide.jump('g-meditation')">17. Meditation</a>
+          <a class="toc-link" onclick="Guide.jump('g-mutagens')">18. Mutagens</a>
+          <a class="toc-link" onclick="Guide.jump('g-trophies')">19. Trophies</a>
+          <a class="toc-link" onclick="Guide.jump('g-pvp')">20. Witcher vs Witcher</a>
+          <a class="toc-link" onclick="Guide.jump('g-vp')">21. Victory Points</a>
+          <a class="toc-link" onclick="Guide.jump('g-endgame')">22. End Game &amp; Scoring</a>
+          <a class="toc-link" onclick="Guide.jump('g-solo')">23. Solo / Coop Mode</a>
+          <a class="toc-link" onclick="Guide.jump('g-monsters')">24. Monster Bestiary</a>
+          <a class="toc-link" onclick="Guide.jump('g-locations')">25. Location Reference</a>
+          <a class="toc-link" onclick="Guide.jump('g-glossary')">26. Glossary</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 1. GAME OVERVIEW ══ -->
+  <div class="card guide-entry" id="g-overview" data-keywords="overview objective goal players age time witcher old world">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">1</span> Game Overview &amp; Objective</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="guide-intro">
+        <p><strong class="text-gold">The Witcher: Old World</strong> is a competitive adventure board game for <strong>1–5 players</strong> (ages 14+, ~120–180 min). Designed by Łukasz Woźniak and published by Go On Board (2022). It is set during the <em>Golden Age of Witchers</em> — decades before the events of the video games or novels — when monster activity was far greater and multiple witcher schools were still active.</p>
+      </div>
+      <div class="guide-rule-box">
+        <h4>Objective</h4>
+        <p>Each player controls a witcher competing to earn the most <strong class="text-gold">Victory Points (VP)</strong> by the time the game ends. VP are earned through:</p>
+        <ul>
+          <li>Defeating monsters and collecting trophies</li>
+          <li>Completing quests and contracts</li>
+          <li>Leveling up your witcher</li>
+          <li>Earning gold (converted to VP at game end)</li>
+          <li>Winning witcher vs. witcher duels</li>
+        </ul>
+      </div>
+      <div class="guide-rule-box">
+        <h4>Core Identity</h4>
+        <p>The game blends <strong>deck-building</strong> (building your combat card deck), <strong>adventure</strong> (exploring the map, uncovering events), and <strong>role-playing elements</strong> (quests, character progression, leveling). Each witcher school plays differently, rewarding different strategies.</p>
+      </div>
+      <div class="guide-tip">💡 <strong>Designer's Intent:</strong> While competitive, players share the same board — cooperation on the same monster is possible, but trophies go to whoever lands the killing blow.</div>
+    </div>
+  </div>
+
+  <!-- ══ 2. COMPONENTS ══ -->
+  <div class="card guide-entry" id="g-components" data-keywords="components pieces board cards tokens dice miniatures">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">2</span> Components</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="g2">
+        <div>
+          <h4 class="text-gold mb1">Board &amp; Tiles</h4>
+          <ul class="guide-list">
+            <li>1 double-sided game board (The Continent map)</li>
+            <li>Modular location tiles (adjust board size by player count)</li>
+            <li>1 monster trail track</li>
+            <li>1 round / game-end tracker</li>
+          </ul>
+          <h4 class="text-gold mb1 mt2">Cards</h4>
+          <ul class="guide-list">
+            <li>5 witcher starter decks (12 cards each)</li>
+            <li>Action / combat cards (common deck for purchasing)</li>
+            <li>Monster cards with ability decks</li>
+            <li>Event / exploration cards</li>
+            <li>Quest cards</li>
+            <li>Trail / special cards</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-gold mb1">Tokens &amp; Markers</h4>
+          <ul class="guide-list">
+            <li>Gold coins (1 and 3 denominations)</li>
+            <li>Shield tokens (Defense)</li>
+            <li>Trophy tokens (per monster type)</li>
+            <li>Potion tokens (Swallow, Cat, Thunderbolt, Tawny Owl, White Honey, Blizzard, Full Moon)</li>
+            <li>Mutagen tokens (Lesser, Greater, Grand)</li>
+            <li>Action tokens (2 per player)</li>
+            <li>Witcher level markers</li>
+            <li>Elixir / charge tokens</li>
+            <li>Damage tokens</li>
+          </ul>
+          <h4 class="text-gold mb1 mt2">Miniatures &amp; Standees</h4>
+          <ul class="guide-list">
+            <li>5 witcher miniatures (or standees in base version)</li>
+            <li>Monster standees / miniatures</li>
+          </ul>
+          <h4 class="text-gold mb1 mt2">Dice</h4>
+          <ul class="guide-list">
+            <li>Combat dice (custom symbols: Sword, Shield, Dodge, Special)</li>
+            <li>Standard dice for certain event resolutions</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 3. SETUP ══ -->
+  <div class="card guide-entry" id="g-setup" data-keywords="setup prepare start begin board layout">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">3</span> Setup</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="guide-steps">
+        <div class="guide-step"><span class="step-num">1</span><div><strong>Board:</strong> Place the game board. Adjust which location tiles are included based on the player count (fewer tiles for 2 players, all for 5).</div></div>
+        <div class="guide-step"><span class="step-num">2</span><div><strong>Monster Trail:</strong> Shuffle monster cards and place them face-down on the monster trail spaces. Reveal the first monster per instructions.</div></div>
+        <div class="guide-step"><span class="step-num">3</span><div><strong>Common Card Row:</strong> Shuffle all purchasable action cards. Deal 6 face-up to form the common row. Place the rest as the draw pile.</div></div>
+        <div class="guide-step"><span class="step-num">4</span><div><strong>Quests:</strong> Shuffle quest cards and deal a set number to quest slots on the board.</div></div>
+        <div class="guide-step"><span class="step-num">5</span><div><strong>Choose Witchers:</strong> Each player picks a witcher character board. Take the matching miniature/standee, place it on the starting location (Kaer Morhen or your school's starting point).</div></div>
+        <div class="guide-step"><span class="step-num">6</span><div><strong>Starting Decks:</strong> Each player takes their witcher's unique starter deck (12 cards), shuffles it, and draws a starting hand (usually 5 cards).</div></div>
+        <div class="guide-step"><span class="step-num">7</span><div><strong>Starting Resources:</strong> Each player takes starting gold (usually 2 coins), 1 Swallow potion token, and places their level marker on Level 1 of their character board.</div></div>
+        <div class="guide-step"><span class="step-num">8</span><div><strong>Round Marker:</strong> Place the round token on Round 1.</div></div>
+        <div class="guide-step"><span class="step-num">9</span><div><strong>First Player:</strong> The player who most recently played a video game goes first (or use another method). Give them the first-player token.</div></div>
+      </div>
+      <div class="guide-tip">💡 For your first game, use the suggested 3-player setup with the introductory side of the board and pre-selected quests.</div>
+    </div>
+  </div>
+
+  <!-- ══ 4. WITCHER CHARACTERS ══ -->
+  <div class="card guide-entry" id="g-witchers" data-keywords="characters witcher geralt vesemir lambert eskel coen letho ability special stats">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">4</span> Witcher Characters</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <p class="text-sec mb2" style="font-size:.85rem;">Each witcher has a unique character board, unique starter deck, and a special passive ability. Starting stats are generally the same (14 HP, Level 1) but card compositions differ significantly.</p>
+      <div class="guide-char-grid">
+
+        <div class="char-card">
+          <div class="char-icon">🐺</div>
+          <h4>Geralt of Rivia</h4>
+          <div class="char-school">Wolf School</div>
+          <div class="char-ability">
+            <strong>Passive:</strong> Before initiating a fight with a monster, Geralt may look at the top card of that monster's reaction deck, then put it back.
+          </div>
+          <div class="char-style">▶ Versatile all-rounder. Good starter witcher for new players. Balanced between combat, signs, and potions.</div>
+        </div>
+
+        <div class="char-card">
+          <div class="char-icon">🐺</div>
+          <h4>Vesemir</h4>
+          <div class="char-school">Wolf School</div>
+          <div class="char-ability">
+            <strong>Passive:</strong> Vesemir starts with an extra trophy slot. When he meditations, he may give one card from his hand to another witcher at the same location.
+          </div>
+          <div class="char-style">▶ Support/mentor role. Best in multiplayer. Helps allies while earning trophies for himself.</div>
+        </div>
+
+        <div class="char-card">
+          <div class="char-icon">🐺</div>
+          <h4>Lambert</h4>
+          <div class="char-school">Wolf School</div>
+          <div class="char-ability">
+            <strong>Passive:</strong> Lambert may spend 1 extra gold when purchasing cards — he draws 2 and keeps 1. His aggressive deck starts with extra sword cards.
+          </div>
+          <div class="char-style">▶ Aggressive brawler. High damage output. Struggles with healing. Best for experienced players who want pure combat.</div>
+        </div>
+
+        <div class="char-card">
+          <div class="char-icon">🐺</div>
+          <h4>Eskel</h4>
+          <div class="char-school">Wolf School</div>
+          <div class="char-ability">
+            <strong>Passive:</strong> Eskel may reroll one combat die per combat for free. His starter deck has improved shield and reaction cards.
+          </div>
+          <div class="char-style">▶ Defensive fighter. Good survivability, excellent for prolonged fights. Steady VP earner.</div>
+        </div>
+
+        <div class="char-card">
+          <div class="char-icon">🦅</div>
+          <h4>Coen</h4>
+          <div class="char-school">Griffin School</div>
+          <div class="char-ability">
+            <strong>Passive:</strong> Coen's sign cards cost 1 fewer gold to purchase. When he plays a sign card, he may draw 1 additional card from his deck.
+          </div>
+          <div class="char-style">▶ Signs specialist. Relies on magic-based combat. High burst damage with correct deck construction.</div>
+        </div>
+
+      </div>
+      <div class="guide-rule-box mt2">
+        <h4>Expansion Witchers (notable)</h4>
+        <ul class="guide-list">
+          <li><strong>Letho (Viper School):</strong> Assassin. Gains VP from defeating other witchers. Aggressive PvP strategy.</li>
+          <li><strong>Milva:</strong> Archer. Ranged attacks can damage monsters at adjacent locations.</li>
+          <li><strong>Ciri:</strong> Unique movement — can teleport between locations. Very fast VP accumulation.</li>
+          <li><strong>Triss / Yennefer:</strong> Sorceress characters with magic-focused playstyles (from expansions).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 5. WITCHER SCHOOLS ══ -->
+  <div class="card guide-entry" id="g-schools" data-keywords="school wolf cat bear griffin viper manticore bonus starting">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">5</span> Witcher Schools</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <p class="text-sec mb2" style="font-size:.85rem;">A witcher's school determines their combat style, the composition of their starter deck, and which trophy types they prioritize. Schools don't provide blanket stat bonuses — the difference is entirely in cards and character abilities.</p>
+      <div class="g2">
+        <div class="guide-school-card">
+          <div style="font-size:2rem;">🐺</div>
+          <h4>Wolf School</h4>
+          <p>The most balanced school. Starter decks include swords, shields, and one sign. Witchers: Geralt, Vesemir, Lambert, Eskel. <strong>Style:</strong> Adaptable — can specialize after Level 2.</p>
+        </div>
+        <div class="guide-school-card">
+          <div style="font-size:2rem;">🐱</div>
+          <h4>Cat School</h4>
+          <p>Fast and aggressive. Starter deck emphasizes attack cards, fewer shields. High damage potential but lower base defense. <strong>Style:</strong> Kill fast before taking damage.</p>
+        </div>
+        <div class="guide-school-card">
+          <div style="font-size:2rem;">🐻</div>
+          <h4>Bear School</h4>
+          <p>Tanky and durable. Heavy armor emphasis. Starter deck has many shield cards and powerful strikes but fewer cards overall. <strong>Style:</strong> Outlast enemies through endurance.</p>
+        </div>
+        <div class="guide-school-card">
+          <div style="font-size:2rem;">🦅</div>
+          <h4>Griffin School</h4>
+          <p>Signs-focused. Starter deck has more sign cards than any other school. Best synergy with magic-based cards. <strong>Style:</strong> Control and signs combo chains.</p>
+        </div>
+        <div class="guide-school-card">
+          <div style="font-size:2rem;">🐍</div>
+          <h4>Viper School</h4>
+          <p>Poison and assassination. Unique cards inflict ongoing damage (poison tokens on monsters). <strong>Style:</strong> Debilitate over multiple rounds. Also excels at PvP.</p>
+        </div>
+        <div class="guide-school-card">
+          <div style="font-size:2rem;">🦂</div>
+          <h4>Manticore School</h4>
+          <p>Alchemy specialists. Expanded potion slots and potion synergy cards. Potions provide stronger effects. <strong>Style:</strong> Preparation-heavy; set up before major fights.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 6. ROUND STRUCTURE ══ -->
+  <div class="card guide-entry" id="g-round" data-keywords="round turn phase order structure sequence">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">6</span> Round Structure</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <p class="text-sec mb2" style="font-size:.85rem;">The game is played over a series of rounds. Each round consists of two phases:</p>
+      <div class="guide-phase">
+        <div class="phase-label">Phase 1</div>
+        <div class="phase-content">
+          <h4>Player Turns (clockwise)</h4>
+          <p>Starting with the first player and going clockwise, each player takes their <strong>full turn</strong> before the next player goes. A turn consists of performing <strong>2 actions</strong> (using your 2 action tokens). You may also perform free actions (playing cards that say "free action") at any time during your turn.</p>
+          <div class="guide-tip mt1">💡 You do not have to use both actions — but there is rarely a reason not to.</div>
+        </div>
+      </div>
+      <div class="guide-phase">
+        <div class="phase-label">Phase 2</div>
+        <div class="phase-content">
+          <h4>End of Round</h4>
+          <p>After all players have taken their turns:</p>
+          <ul class="guide-list">
+            <li>Advance the monster trail (monsters slide forward one space; if a monster reaches the end, the game may end or a penalty is triggered depending on variant)</li>
+            <li>Reveal a new monster to the end of the trail</li>
+            <li>Refresh the common card row (discard leftover cards if instructed, deal new ones)</li>
+            <li>Pass the first-player token clockwise</li>
+            <li>Advance the round marker</li>
+            <li>Each player resets their action tokens</li>
+          </ul>
+        </div>
+      </div>
+      <div class="guide-rule-box mt1">
+        <h4>End of Turn (after your 2 actions)</h4>
+        <ul class="guide-list">
+          <li>Discard all cards played this turn</li>
+          <li>Discard down to your hand limit (usually 3) — discard excess</li>
+          <li>Draw back up to your hand size from your personal deck</li>
+          <li>If your deck is empty, shuffle your discard pile to form a new deck</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 7. ACTIONS ══ -->
+  <div class="card guide-entry" id="g-actions" data-keywords="action move explore train meditate fight purchase buy card travel">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">7</span> Actions</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <p class="text-sec mb2" style="font-size:.85rem;">On your turn you take exactly <strong>2 actions</strong>. Each action token is spent on one of the following:</p>
+      <div class="action-list">
+        <div class="action-item">
+          <div class="action-icon">🚶</div>
+          <div>
+            <h4>Travel</h4>
+            <p>Move your witcher along a path to an adjacent location. You may play movement cards to travel further. Terrain type affects how many cards / gold you must spend (roads are free, mountains cost extra).</p>
+          </div>
+        </div>
+        <div class="action-item">
+          <div class="action-icon">🔍</div>
+          <div>
+            <h4>Explore</h4>
+            <p>At certain locations, draw and resolve the top card of the exploration deck for that tile. Exploration cards trigger events, grant resources, reveal hidden encounters, or provide clues to quests.</p>
+          </div>
+        </div>
+        <div class="action-item">
+          <div class="action-icon">🗡️</div>
+          <div>
+            <h4>Fight a Monster</h4>
+            <p>If there is a monster at your location (or you move to one), you may spend an action to initiate combat. This is the primary way to earn trophies and VP. See Section 11 for full combat rules.</p>
+          </div>
+        </div>
+        <div class="action-item">
+          <div class="action-icon">📚</div>
+          <div>
+            <h4>Train (Purchase a Card)</h4>
+            <p>Spend gold equal to the card's cost to take one card from the common row into your discard pile. The row is immediately refilled from the draw pile. You may train multiple times per turn (one action each, or some cards allow free purchases).</p>
+          </div>
+        </div>
+        <div class="action-item">
+          <div class="action-icon">🌙</div>
+          <div>
+            <h4>Meditate</h4>
+            <p>Spend an action to meditate. You may discard any number of cards from your hand, then heal HP equal to the number discarded (up to your maximum). You also gain the meditation benefit listed on your character board. See Section 17.</p>
+          </div>
+        </div>
+        <div class="action-item">
+          <div class="action-icon">📜</div>
+          <div>
+            <h4>Complete / Take a Quest</h4>
+            <p>At certain locations, spend an action to accept a quest (placing the quest card in front of you) or to complete a quest you already hold (if requirements are met). Completing quests awards VP, gold, or cards.</p>
+          </div>
+        </div>
+        <div class="action-item">
+          <div class="action-icon">⚔️</div>
+          <div>
+            <h4>Challenge a Witcher</h4>
+            <p>If another witcher is at your location, you may spend an action to challenge them to a duel. Both players participate in a modified combat. See Section 20.</p>
+          </div>
+        </div>
+      </div>
+      <div class="guide-rule-box mt1">
+        <h4>Free Actions (no action token required)</h4>
+        <ul class="guide-list">
+          <li>Playing cards from your hand that say "Free Action" or "Reaction"</li>
+          <li>Drinking a potion you already hold (timing varies by potion)</li>
+          <li>Discarding a card for its discard benefit (if listed)</li>
+          <li>Using a witcher ability with a "⚡ free" symbol</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 8. MOVEMENT & LOCATIONS ══ -->
+  <div class="card guide-entry" id="g-movement" data-keywords="movement travel location path road mountain forest city terrain">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">8</span> Movement &amp; Locations</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="guide-rule-box">
+        <h4>Basic Movement</h4>
+        <p>The board is a network of <strong>location nodes</strong> connected by <strong>paths</strong>. Each Travel action moves you to one adjacent location. Some cards let you travel additional spaces in one action.</p>
+      </div>
+      <h4 class="text-gold mb1 mt2">Terrain Types</h4>
+      <table class="guide-table">
+        <thead><tr><th>Terrain</th><th>Movement Cost</th><th>Special</th></tr></thead>
+        <tbody>
+          <tr><td>🛤️ Road</td><td>1 action (normal)</td><td>Standard movement</td></tr>
+          <tr><td>🌲 Forest</td><td>1 action + 1 card played</td><td>May contain exploration events</td></tr>
+          <tr><td>⛰️ Mountain</td><td>1 action + 1 gold</td><td>Some witchers have mountain bonuses</td></tr>
+          <tr><td>💧 Water / Swamp</td><td>1 action + special card</td><td>Required card type varies</td></tr>
+        </tbody>
+      </table>
+      <h4 class="text-gold mb1 mt2">Location Types</h4>
+      <table class="guide-table">
+        <thead><tr><th>Icon</th><th>Type</th><th>Available Actions</th></tr></thead>
+        <tbody>
+          <tr><td>🏙️</td><td>City / Town</td><td>Train (buy cards), accept quests, heal, sell trophies</td></tr>
+          <tr><td>🏰</td><td>Witcher Fortress</td><td>Meditate (enhanced), train for free, potion crafting</td></tr>
+          <tr><td>🌲</td><td>Forest Path</td><td>Explore, encounter monsters</td></tr>
+          <tr><td>🏔️</td><td>Ruins / Dungeon</td><td>Explore (higher risk, higher reward)</td></tr>
+          <tr><td>⚔️</td><td>Monster Lair</td><td>Fight monster (guaranteed encounter)</td></tr>
+          <tr><td>📜</td><td>Notice Board</td><td>Take quest, trade trophies for VP</td></tr>
+        </tbody>
+      </table>
+      <div class="guide-tip mt1">💡 Multiple witchers can occupy the same location simultaneously. This can be strategic — you can join an ongoing fight if you arrive before it resolves.</div>
+    </div>
+  </div>
+
+  <!-- ══ 9. EXPLORATION ══ -->
+  <div class="card guide-entry" id="g-explore" data-keywords="exploration explore event card draw encounter discovery">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">9</span> Exploration</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <p class="text-sec mb1" style="font-size:.85rem;">When you take the <strong>Explore</strong> action at a valid location, draw the top card of that location's exploration deck and resolve it immediately.</p>
+      <h4 class="text-gold mb1">Exploration Card Types</h4>
+      <div class="g2">
+        <div class="guide-rule-box">
+          <h4>🎁 Discovery</h4>
+          <p>Immediately gain a resource: coins, a trophy token, a potion, a mutagen, or cards.</p>
+        </div>
+        <div class="guide-rule-box">
+          <h4>⚡ Encounter</h4>
+          <p>A mini-event resolves. Usually a skill test or choice. Examples: "Spend 2 gold or lose 2 HP", "Draw 2 cards and discard 1".</p>
+        </div>
+        <div class="guide-rule-box">
+          <h4>👹 Ambush</h4>
+          <p>A monster appears! You must fight it immediately (it does not go on the trail). Defeating it grants a trophy but no trail VP.</p>
+        </div>
+        <div class="guide-rule-box">
+          <h4>📜 Clue</h4>
+          <p>Advances an active quest. Collect enough clues to unlock quest completion requirements.</p>
+        </div>
+      </div>
+      <div class="guide-tip mt1">💡 Exploration is the main source of potions and mutagen fragments outside of specific city actions. Plan your routes to pass through exploration-rich terrain.</div>
+    </div>
+  </div>
+
+  <!-- ══ 10. TRAINING ══ -->
+  <div class="card guide-entry" id="g-training" data-keywords="training buy purchase card row gold cost deck building">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">10</span> Training (Buying Cards)</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="guide-rule-box">
+        <h4>The Common Card Row</h4>
+        <p>Six cards are always face-up in a central row. Each has a gold cost printed in the corner. To train, spend an action and pay the gold cost of the card you want. The card goes to your <strong>discard pile</strong> (not your hand). The row is immediately refilled.</p>
+      </div>
+      <h4 class="text-gold mb1 mt2">Card Categories</h4>
+      <table class="guide-table">
+        <thead><tr><th>Type</th><th>Cost</th><th>Function</th></tr></thead>
+        <tbody>
+          <tr><td>⚔️ Combat</td><td>2–5 gold</td><td>Play during combat for sword/shield symbols or dice</td></tr>
+          <tr><td>🌀 Sign</td><td>3–6 gold</td><td>Magic effects during or outside combat</td></tr>
+          <tr><td>🛡️ Defense</td><td>2–4 gold</td><td>Shields, dodge, and counter effects</td></tr>
+          <tr><td>🎯 Special</td><td>4–8 gold</td><td>Unique powerful effects, often one-time use</td></tr>
+          <tr><td>💰 Economy</td><td>1–3 gold</td><td>Generate gold, draw extra cards, thin your deck</td></tr>
+          <tr><td>🗡️ Witcher</td><td>5–9 gold</td><td>Witcher-school-specific powerful cards (when available)</td></tr>
+        </tbody>
+      </table>
+      <div class="guide-rule-box mt1">
+        <h4>Deck Thinning</h4>
+        <p>Some cards let you <strong>remove</strong> a card from your deck entirely (place it in a "removed" box). This is very powerful — a smaller, focused deck cycles faster and you draw your best cards more often. Prioritize removing weak starter cards early.</p>
+      </div>
+      <div class="guide-tip mt1">💡 The common row refreshes after each purchase, so you can sometimes buy multiple cards in one turn if you have enough gold-generating cards in hand.</div>
+    </div>
+  </div>
+
+  <!-- ══ 11. COMBAT ══ -->
+  <div class="card guide-entry" id="g-combat" data-keywords="combat fight monster enemy damage health attack defend dice card">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">11</span> Monster Combat</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <p class="text-sec mb2" style="font-size:.85rem;">Combat is the heart of the game — a tactical card-and-dice system where you must manage your deck against the monster's behavior deck.</p>
+
+      <div class="guide-steps">
+        <div class="guide-step"><span class="step-num">1</span><div><strong>Initiate:</strong> Spend an action to fight a monster at your location. Take the monster card — it shows HP, level, and which reaction deck to use.</div></div>
+        <div class="guide-step"><span class="step-num">2</span><div><strong>Monster Reaction:</strong> Draw the top card from the <strong>monster's reaction deck</strong>. This card defines what the monster does this round (attack value, special ability, damage type).</div></div>
+        <div class="guide-step"><span class="step-num">3</span><div><strong>Play Your Cards:</strong> Play cards from your hand face-up. Resolve their effects: some give sword icons (⚔), shield icons (🛡), dice rolls (🎲), sign effects, or special abilities.</div></div>
+        <div class="guide-step"><span class="step-num">4</span><div><strong>Roll Dice:</strong> If you played cards that instruct you to roll dice, roll now. Add the results (sword, shield, special symbols) to your total from cards.</div></div>
+        <div class="guide-step"><span class="step-num">5</span><div><strong>Resolve Damage:</strong>
+          <ul class="guide-list" style="margin-top:.4rem;">
+            <li>Count your total ⚔ symbols → this is damage dealt to the monster</li>
+            <li>The monster deals its printed damage minus your total 🛡 shields</li>
+            <li>Any unblocked monster damage is dealt to your HP</li>
+          </ul>
+        </div></div>
+        <div class="guide-step"><span class="step-num">6</span><div><strong>Repeat:</strong> Combat continues for multiple rounds until the monster's HP reaches 0 (you win) or your HP reaches 0 (you flee or are defeated).</div></div>
+        <div class="guide-step"><span class="step-num">7</span><div><strong>Resolution:</strong> If you defeat the monster, take the <strong>trophy token</strong> and any gold reward printed on the monster card. The monster is removed from the board.</div></div>
+      </div>
+
+      <div class="g2 mt2">
+        <div class="guide-rule-box">
+          <h4>⚔ Sword Symbols</h4>
+          <p>Each ⚔ deals 1 damage to the monster. Some cards grant +2 or more. Swords from cards and dice combine.</p>
+        </div>
+        <div class="guide-rule-box">
+          <h4>🛡 Shield Symbols</h4>
+          <p>Each 🛡 blocks 1 damage from the monster's attack this combat round. Shields do <em>not</em> carry over between rounds.</p>
+        </div>
+        <div class="guide-rule-box">
+          <h4>🎲 Dice Roll</h4>
+          <p>Combat dice have custom faces: Sword, Shield, Dodge (no effect but can be re-rolled), and Special (per-card instructions). Roll results add to your card results.</p>
+        </div>
+        <div class="guide-rule-box">
+          <h4>❤ Monster HP</h4>
+          <p>Monsters have HP listed on their card. Damage accumulates — you don't have to kill in one round. Place a damage marker on the monster between rounds.</p>
+        </div>
+      </div>
+
+      <div class="guide-rule-box mt1">
+        <h4>Fleeing Combat</h4>
+        <p>At the end of any combat round (before starting a new one), you may choose to <strong>flee</strong>. You lose 2 HP (minimum — some monsters may deal more), discard your hand, and your turn ends. The monster remains at the location at its current HP.</p>
+      </div>
+      <div class="guide-rule-box mt1">
+        <h4>Being Defeated (0 HP)</h4>
+        <p>If your HP drops to 0 mid-combat: you are knocked out. Lose all unspent gold you are carrying (place it on the board for others to collect), discard your hand, reset your HP to half maximum (rounded up), and return to the nearest friendly location (Kaer Morhen or your school's base). You do NOT lose cards from your deck.</p>
+      </div>
+      <div class="guide-tip mt1">💡 <strong>Monster Weakness:</strong> Each monster has a weakness printed on its card (e.g., Silver, Igni Sign, specific oil). Playing cards that match the weakness often triggers bonus effects or extra damage.</div>
+    </div>
+  </div>
+
+  <!-- ══ 12. CARD SYSTEM ══ -->
+  <div class="card guide-entry" id="g-cards" data-keywords="card deck hand draw discard cycle build starter purchased remove">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">12</span> Card System (Deck Building)</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="guide-rule-box">
+        <h4>Your Personal Deck</h4>
+        <p>Each witcher maintains their own personal deck of cards. You start with a 12-card starter deck and grow/improve it by purchasing cards. At any time your deck = starter cards still in deck + purchased cards still in deck (not counting removed or in discard/hand).</p>
+      </div>
+      <div class="guide-rule-box mt1">
+        <h4>Hand Limit &amp; Drawing</h4>
+        <p>Your hand limit is printed on your character board (usually 3–4 cards). At the <strong>end of your turn</strong>, you discard all cards played and any excess hand cards, then draw back up to your hand limit. If your deck runs out mid-draw, immediately shuffle your discard pile into a new deck and continue drawing.</p>
+      </div>
+      <div class="guide-rule-box mt1">
+        <h4>During Combat — Extra Draw</h4>
+        <p>You may play <strong>all cards in your hand</strong> during combat (not limited to hand size). Some cards also let you draw additional cards during combat. This is the main way to output high damage in a single combat round.</p>
+      </div>
+      <h4 class="text-gold mb1 mt2">Card Anatomy</h4>
+      <table class="guide-table">
+        <thead><tr><th>Element</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>Top number</td><td>Gold cost to purchase</td></tr>
+          <tr><td>⚔ icons</td><td>Sword / damage symbols generated</td></tr>
+          <tr><td>🛡 icons</td><td>Shield / defense symbols generated</td></tr>
+          <tr><td>💰 icons</td><td>Gold generated (use this turn only)</td></tr>
+          <tr><td>↩ "When Discarded"</td><td>Effect triggers only if you discard this card (not play it)</td></tr>
+          <tr><td>🔁 "Reaction"</td><td>Can be played outside your turn (e.g., during monster's attack)</td></tr>
+          <tr><td>❌ "Remove"</td><td>After use, this card is permanently removed from your deck</td></tr>
+          <tr><td>School symbol</td><td>Card belongs to a specific school (may have school bonus effects)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ 13. SIGNS ══ -->
+  <div class="card guide-entry" id="g-signs" data-keywords="sign magic aard quen igni yrden axii witcher magic">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">13</span> Signs</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <p class="text-sec mb2" style="font-size:.85rem;">Signs are magical abilities unique to witchers. In the board game, signs are represented by cards you can purchase or that come with certain starter decks. Playing a sign card triggers its specific effect.</p>
+      <div class="g2">
+        <div class="sign-card">
+          <div class="sign-icon">🌊</div>
+          <h4>Aard</h4>
+          <p><strong>Telekinetic Strike.</strong> When played: the monster loses its next shield symbol (its defense is reduced for this round) or you may push a small monster to an adjacent location.</p>
+        </div>
+        <div class="sign-card">
+          <div class="sign-icon">🔥</div>
+          <h4>Igni</h4>
+          <p><strong>Fire Stream.</strong> When played: deal direct damage to the monster equal to the number printed on the card (bypasses its shields). Very effective against certain monster types.</p>
+        </div>
+        <div class="sign-card">
+          <div class="sign-icon">🛡️</div>
+          <h4>Quen</h4>
+          <p><strong>Magic Shield.</strong> When played: place 2–3 shield tokens on yourself. These persist into the next combat round (unlike regular card shields) and absorb damage before your HP is reduced.</p>
+        </div>
+        <div class="sign-card">
+          <div class="sign-icon">🕸️</div>
+          <h4>Yrden</h4>
+          <p><strong>Magic Trap.</strong> When played: the monster's next reaction card is revealed and you choose whether to resolve it or discard it and draw a new one. Powerful for avoiding nasty monster abilities.</p>
+        </div>
+        <div class="sign-card">
+          <div class="sign-icon">💫</div>
+          <h4>Axii</h4>
+          <p><strong>Charm / Confusion.</strong> When played: reduce the monster's attack value this round by a set amount, or (in witcher vs. witcher) force the opponent to discard a card from their hand.</p>
+        </div>
+      </div>
+      <div class="guide-tip mt1">💡 Sign cards bought from the common row are more powerful than starter sign cards. Griffin School witchers pay 1 less gold for sign cards — build around this advantage.</div>
+    </div>
+  </div>
+
+  <!-- ══ 14. POTIONS ══ -->
+  <div class="card guide-entry" id="g-potions" data-keywords="potion alchemy brew swallow thunderbolt cat tawny owl white honey blizzard full moon">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">14</span> Potions &amp; Alchemy</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <p class="text-sec mb2" style="font-size:.85rem;">Potions are single-use tokens that provide powerful effects. Each player can hold a limited number of potions (usually 3, modified by level upgrades). Potions are gained from exploration, cities, or crafting.</p>
+      <table class="guide-table">
+        <thead><tr><th>Potion</th><th>Icon</th><th>Effect</th><th>When</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Swallow</strong></td><td>🟢</td><td>Heal 4 HP</td><td>Any time (free action)</td></tr>
+          <tr><td><strong>Thunderbolt</strong></td><td>⚡</td><td>Gain +3 swords this combat round</td><td>During combat</td></tr>
+          <tr><td><strong>Cat</strong></td><td>🐱</td><td>Draw 3 extra cards this combat round</td><td>During combat</td></tr>
+          <tr><td><strong>Tawny Owl</strong></td><td>🦉</td><td>Gain 1 extra action this turn</td><td>Your turn</td></tr>
+          <tr><td><strong>White Honey</strong></td><td>🍯</td><td>Clear all toxicity; reset potion count</td><td>Any time</td></tr>
+          <tr><td><strong>Blizzard</strong></td><td>❄️</td><td>Play cards from the top of your deck this combat</td><td>During combat</td></tr>
+          <tr><td><strong>Full Moon</strong></td><td>🌕</td><td>Gain 2 mutagen tokens</td><td>Any time</td></tr>
+          <tr><td><strong>Golden Oriole</strong></td><td>🐦</td><td>Ignore all poison/special damage this combat</td><td>During combat</td></tr>
+          <tr><td><strong>Petri's Philter</strong></td><td>🔮</td><td>Your next sign deals double effect</td><td>During combat</td></tr>
+          <tr><td><strong>Maribor Forest</strong></td><td>🌿</td><td>Gain +2 shields this combat round</td><td>During combat</td></tr>
+        </tbody>
+      </table>
+      <div class="guide-rule-box mt1">
+        <h4>Potion Crafting</h4>
+        <p>At a Witcher Fortress or city with an alchemist, spend ingredients (gained from exploration) and gold to craft specific potions. Crafted potions can be stored beyond your normal limit (Manticore School perk).</p>
+      </div>
+      <div class="guide-tip mt1">💡 Never enter a fight with fewer than 2 potions — Swallow for healing and one combat potion. Thunderbolt is almost always the best combat potion.</div>
+    </div>
+  </div>
+
+  <!-- ══ 15. QUESTS ══ -->
+  <div class="card guide-entry" id="g-quests" data-keywords="quest contract objective reward complete notice board">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">15</span> Quests &amp; Contracts</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="guide-rule-box">
+        <h4>Quest Basics</h4>
+        <p>Quest cards are placed at notice board locations on the map. To accept a quest, visit that location and spend an action. The quest card is placed in front of you. You may hold up to 2 quests at once (modified by level).</p>
+      </div>
+      <h4 class="text-gold mb1 mt2">Quest Types</h4>
+      <div class="g2">
+        <div class="guide-rule-box">
+          <h4>🗡️ Combat Contract</h4>
+          <p>Defeat a specific monster type (e.g., "Defeat 2 Necrophage monsters"). When the condition is met, return to a notice board to collect the reward.</p>
+        </div>
+        <div class="guide-rule-box">
+          <h4>🌍 Exploration Quest</h4>
+          <p>Visit a specific location and use the Explore action to find a clue or item. May require multiple exploration actions across different sites.</p>
+        </div>
+        <div class="guide-rule-box">
+          <h4>💰 Delivery Quest</h4>
+          <p>Carry an item from one location to another. Straightforward but requires planning your route efficiently.</p>
+        </div>
+        <div class="guide-rule-box">
+          <h4>⭐ Epic Quest</h4>
+          <p>Multi-step quest granting large VP rewards. Usually requires a combination of combat, exploration, and visits to multiple locations. Worth 5–8 VP on completion.</p>
+        </div>
+      </div>
+      <div class="guide-rule-box mt1">
+        <h4>Rewards</h4>
+        <p>Quest rewards are printed on the card and typically include: Victory Points (2–8 VP), Gold (2–5 coins), Trophy tokens, Potion tokens, or the right to immediately purchase a card from the row for free.</p>
+      </div>
+      <div class="guide-tip mt1">💡 Quests are one of the most efficient VP sources in the game. A witcher who completes 3 quests in a game has a significant advantage. Prioritize quests that align with your planned monster hunts.</div>
+    </div>
+  </div>
+
+  <!-- ══ 16. LEVELING UP ══ -->
+  <div class="card guide-entry" id="g-leveling" data-keywords="level up upgrade attribute ability stat health potion slot deck">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">16</span> Leveling Up</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="guide-rule-box">
+        <h4>How to Level Up</h4>
+        <p>After defeating a monster of a level equal to or higher than your current witcher level, you may immediately level up. Advance your level marker on your character board (max Level 5 in base game). Leveling up happens once per fight — you cannot gain multiple levels from one kill.</p>
+      </div>
+      <div class="guide-rule-box mt1">
+        <h4>Witcher Levels &amp; Benefits</h4>
+        <p>Each level unlocks new perks shown on your character board. You choose one of two options at each level. Typical choices:</p>
+      </div>
+      <table class="guide-table">
+        <thead><tr><th>Level</th><th>VP Reward</th><th>Typical Perk Options</th></tr></thead>
+        <tbody>
+          <tr><td>1 → 2</td><td>0 VP</td><td>+2 Max HP <em>OR</em> +1 potion slot</td></tr>
+          <tr><td>2 → 3</td><td>1 VP</td><td>+1 hand size <em>OR</em> gain a special card for free</td></tr>
+          <tr><td>3 → 4</td><td>2 VP</td><td>Unlock witcher-specific ability <em>OR</em> +3 Max HP</td></tr>
+          <tr><td>4 → 5</td><td>3 VP</td><td>Powerful unique ability <em>OR</em> +1 mutagen slot</td></tr>
+        </tbody>
+      </table>
+      <div class="guide-rule-box mt1">
+        <h4>Leveling &amp; Monster Tiers</h4>
+        <p>Monster difficulty is measured by level (1–5). Fighting higher-level monsters is riskier but the only way to advance beyond Level 1. You cannot level up from defeating a monster <em>lower</em> than your current level — though you still get the trophy and gold.</p>
+      </div>
+      <div class="guide-tip mt1">💡 Level 3 is the critical breakpoint — the perk at 3→4 is usually your character's defining ability. Plan your deck to synergize with it from the start.</div>
+    </div>
+  </div>
+
+  <!-- ══ 17. MEDITATION ══ -->
+  <div class="card guide-entry" id="g-meditation" data-keywords="meditate meditation heal recovery rest discard hand cards">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">17</span> Meditation</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="guide-rule-box">
+        <h4>Meditation Action</h4>
+        <p>Spend 1 action. You may discard any number of cards from your current hand. For each card discarded, heal <strong>1 HP</strong> (up to your maximum). Additionally, resolve the meditation bonus printed on your character board.</p>
+      </div>
+      <h4 class="text-gold mb1 mt2">Common Meditation Bonuses (per character)</h4>
+      <table class="guide-table">
+        <thead><tr><th>Witcher</th><th>Meditation Bonus</th></tr></thead>
+        <tbody>
+          <tr><td>Geralt</td><td>Draw 2 cards, keep 1</td></tr>
+          <tr><td>Vesemir</td><td>Give 1 card to an ally at same location</td></tr>
+          <tr><td>Lambert</td><td>Gain 1 gold</td></tr>
+          <tr><td>Eskel</td><td>Gain 1 shield token (persists to next combat)</td></tr>
+          <tr><td>Coen</td><td>Look at top 3 cards of common row, rearrange them</td></tr>
+        </tbody>
+      </table>
+      <div class="guide-rule-box mt1">
+        <h4>Enhanced Meditation (at Witcher Fortress)</h4>
+        <p>When meditating at a Witcher Fortress location, you also get to: heal to full HP (regardless of cards discarded), craft 1 potion for free, or remove 1 card from your deck for free.</p>
+      </div>
+      <div class="guide-tip mt1">💡 Meditation is your main source of healing outside of Swallow potions. If you're below 50% HP before a major fight, always meditate first — discarding weak cards and healing is almost always worth the action.</div>
+    </div>
+  </div>
+
+  <!-- ══ 18. MUTAGENS ══ -->
+  <div class="card guide-entry" id="g-mutagens" data-keywords="mutagen lesser greater grand slot token passive ability permanent">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">18</span> Mutagens</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <p class="text-sec mb2" style="font-size:.85rem;">Mutagens are permanent passive bonuses that enhance your witcher's abilities. They represent the alchemical augmentations that transform humans into witchers.</p>
+      <div class="guide-rule-box">
+        <h4>Gaining Mutagens</h4>
+        <p>Mutagen tokens are earned through: exploration cards, specific quest rewards, defeating certain monsters, the Full Moon potion, or spending actions at a Witcher Fortress. You start with 0 mutagen slots. Slots unlock at specific levels.</p>
+      </div>
+      <h4 class="text-gold mb1 mt2">Mutagen Types</h4>
+      <table class="guide-table">
+        <thead><tr><th>Type</th><th>Symbol</th><th>Effect When Equipped</th></tr></thead>
+        <tbody>
+          <tr><td>Lesser Mutagen</td><td>🔵</td><td>+1 ⚔ in every combat round</td></tr>
+          <tr><td>Lesser Mutagen</td><td>🟢</td><td>+1 🛡 in every combat round</td></tr>
+          <tr><td>Lesser Mutagen</td><td>🔴</td><td>Heal 1 HP at the start of each round in combat</td></tr>
+          <tr><td>Greater Mutagen</td><td>🔵🔵</td><td>+2 ⚔ in every combat round</td></tr>
+          <tr><td>Greater Mutagen</td><td>🟢🟢</td><td>+2 🛡 in every combat round</td></tr>
+          <tr><td>Greater Mutagen</td><td>🔴🔴</td><td>Heal 2 HP at start of each combat round</td></tr>
+          <tr><td>Grand Mutagen</td><td>⭐</td><td>Powerful unique effect per character</td></tr>
+        </tbody>
+      </table>
+      <div class="guide-rule-box mt1">
+        <h4>Equipping Mutagens</h4>
+        <p>Your character board has mutagen slots (unlocked via leveling). Place a matching mutagen token in a slot — it is immediately active and remains for the rest of the game. You cannot remove a mutagen once equipped. Slots are unlocked at Levels 2, 3, and 4.</p>
+      </div>
+      <div class="guide-tip mt1">💡 Red mutagens (+healing per round) are extremely powerful for long fights against high-HP monsters. Blue mutagens are best for fast killing strategies.</div>
+    </div>
+  </div>
+
+  <!-- ══ 19. TROPHIES ══ -->
+  <div class="card guide-entry" id="g-trophies" data-keywords="trophy token monster type collection bonus kill reward">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">19</span> Trophies</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="guide-rule-box">
+        <h4>Earning Trophies</h4>
+        <p>When you deliver the killing blow to a monster in combat, you take a <strong>trophy token</strong> matching that monster's category. Trophy tokens are kept face-up in front of you throughout the game.</p>
+      </div>
+      <h4 class="text-gold mb1 mt2">Monster Trophy Categories</h4>
+      <table class="guide-table">
+        <thead><tr><th>Category</th><th>Examples</th><th>Icon</th></tr></thead>
+        <tbody>
+          <tr><td>Necrophage</td><td>Ghoul, Rotfiend, Alghoul, Drowned Dead</td><td>💀</td></tr>
+          <tr><td>Beast</td><td>Nekker, Wolf, Bear, Basilisk</td><td>🐾</td></tr>
+          <tr><td>Draconid</td><td>Wyvern, Basilisk, Cockatrice, Forktail</td><td>🐉</td></tr>
+          <tr><td>Vampire</td><td>Katakan, Alps, Bruxa, Ekimmara</td><td>🧛</td></tr>
+          <tr><td>Cursed One</td><td>Striga, Werewolf, Botchling</td><td>👻</td></tr>
+          <tr><td>Ogroid</td><td>Cyclops, Troll, Ice Giant, Fiend</td><td>👁️</td></tr>
+          <tr><td>Relict</td><td>Leshen, Crones, Godling</td><td>🌲</td></tr>
+          <tr><td>Hybrid</td><td>Griffin, Chimera, Manticore</td><td>🦅</td></tr>
+          <tr><td>Insectoid</td><td>Arachas, Endrega, Kikimora</td><td>🕷️</td></tr>
+          <tr><td>Specter</td><td>Wraith, Noon Wraith, Foglet</td><td>👁️</td></tr>
+        </tbody>
+      </table>
+      <div class="guide-rule-box mt1">
+        <h4>Trophy VP (End-Game Scoring)</h4>
+        <p>At game end: the witcher with the <strong>most trophies of each category</strong> earns bonus VP. Ties share the VP. Additionally, total trophy count may matter for certain quest or card effects throughout the game.</p>
+      </div>
+      <div class="guide-rule-box mt1">
+        <h4>Mid-Game Trophy Redemption</h4>
+        <p>At notice board locations, you may spend an action to trade 2 trophy tokens (of any type) for 1 VP or 3 gold. Only do this if you have a surplus of one category and VP is urgently needed.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 20. PVP ══ -->
+  <div class="card guide-entry" id="g-pvp" data-keywords="pvp duel fight challenge witcher versus player combat">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">20</span> Witcher vs. Witcher Duels</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="guide-rule-box">
+        <h4>Initiating a Duel</h4>
+        <p>If you and another witcher are at the same location, you may spend an action to challenge them. The challenged witcher <em>cannot</em> refuse.</p>
+      </div>
+      <div class="guide-steps">
+        <div class="guide-step"><span class="step-num">1</span><div>Both witchers reveal their current hands simultaneously.</div></div>
+        <div class="guide-step"><span class="step-num">2</span><div>Both players play cards for one round of combat (same rules as monster combat, but you deal damage to each other).</div></div>
+        <div class="guide-step"><span class="step-num">3</span><div>Both roll combat dice (if their played cards instruct it). Add results.</div></div>
+        <div class="guide-step"><span class="step-num">4</span><div>Each witcher's total ⚔ minus opponent's total 🛡 = HP lost by the opponent.</div></div>
+        <div class="guide-step"><span class="step-num">5</span><div>After one round: the witcher with more HP remaining wins. In a tie, the challenger wins.</div></div>
+      </div>
+      <div class="guide-rule-box mt1">
+        <h4>Duel Rewards &amp; Penalties</h4>
+        <p><strong>Winner:</strong> Gains 1 VP and may take 1 gold coin from the loser.<br>
+        <strong>Loser:</strong> Loses 1 gold coin (if available), takes any damage sustained in the duel, and their turn ends immediately if they were the challenger.</p>
+      </div>
+      <div class="guide-tip mt1">💡 Dueling is rarely the most efficient VP source unless you're playing Letho (Viper School) who earns bonus VP from defeating other witchers. For most characters, monster hunting gives better returns.</div>
+    </div>
+  </div>
+
+  <!-- ══ 21. VICTORY POINTS ══ -->
+  <div class="card guide-entry" id="g-vp" data-keywords="victory points vp score earn ways sources gold coins quest level trophy duel">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">21</span> Victory Points — All Sources</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <table class="guide-table">
+        <thead><tr><th>Source</th><th>VP</th><th>Timing</th></tr></thead>
+        <tbody>
+          <tr><td>Defeat a Level 1 monster</td><td>1 VP</td><td>Immediately on kill</td></tr>
+          <tr><td>Defeat a Level 2 monster</td><td>2 VP</td><td>Immediately on kill</td></tr>
+          <tr><td>Defeat a Level 3 monster</td><td>3 VP</td><td>Immediately on kill</td></tr>
+          <tr><td>Defeat a Level 4 monster</td><td>4 VP</td><td>Immediately on kill</td></tr>
+          <tr><td>Defeat a Level 5 monster</td><td>5 VP</td><td>Immediately on kill</td></tr>
+          <tr><td>Level up (Level 2)</td><td>0 VP</td><td>On level-up</td></tr>
+          <tr><td>Level up (Level 3)</td><td>1 VP</td><td>On level-up</td></tr>
+          <tr><td>Level up (Level 4)</td><td>2 VP</td><td>On level-up</td></tr>
+          <tr><td>Level up (Level 5)</td><td>3 VP</td><td>On level-up</td></tr>
+          <tr><td>Complete a quest</td><td>2–8 VP</td><td>On completion</td></tr>
+          <tr><td>Win a witcher duel</td><td>1 VP</td><td>After duel</td></tr>
+          <tr><td>Most trophies in a category</td><td>2–4 VP</td><td>End game scoring</td></tr>
+          <tr><td>Gold coins (every 3 gold)</td><td>1 VP</td><td>End game only</td></tr>
+          <tr><td>Specific cards with VP icons</td><td>1–3 VP</td><td>Varies by card</td></tr>
+          <tr><td>Trail bonus (first kill on trail)</td><td>+1 VP bonus</td><td>Immediately on kill</td></tr>
+        </tbody>
+      </table>
+      <div class="guide-rule-box mt1">
+        <h4>VP Tracking</h4>
+        <p>VP are tracked openly on your character board. There is no hidden VP — all players can see everyone's score at all times. This is intentional — it lets you know when to race ahead or when to block a leading witcher.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 22. END GAME ══ -->
+  <div class="card guide-entry" id="g-endgame" data-keywords="end game final scoring trigger win winner">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">22</span> End Game &amp; Final Scoring</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="guide-rule-box">
+        <h4>Game End Triggers</h4>
+        <p>The game ends immediately at the end of a round when <strong>any one</strong> of these conditions is met:</p>
+        <ul class="guide-list">
+          <li>The monster trail is exhausted (no more monsters to place)</li>
+          <li>A monster reaches the end of the trail and triggers the "trail end" event</li>
+          <li>A player reaches the VP target printed on the round track (varies by player count and game length)</li>
+        </ul>
+      </div>
+      <div class="guide-rule-box mt1">
+        <h4>Final Scoring Steps</h4>
+        <ol class="guide-list" style="list-style:decimal;padding-left:1.25rem;">
+          <li>Each player counts current VP on their board</li>
+          <li>Add VP for <strong>most trophies in each category</strong> (check all categories; ties split VP rounded down)</li>
+          <li>Convert remaining <strong>gold</strong> at 3 gold → 1 VP</li>
+          <li>Add VP from any cards that grant end-game VP</li>
+          <li>The player with the most total VP wins!</li>
+        </ol>
+      </div>
+      <div class="guide-rule-box mt1">
+        <h4>Tiebreaker</h4>
+        <p>In case of a tied VP total: the witcher with the most trophies wins. If still tied: most gold. If still tied: highest witcher level. If still tied: share the victory!</p>
+      </div>
+      <div class="guide-tip mt1">💡 Gold-to-VP conversion is inefficient — spend gold on cards and actions during the game. Only hoard gold if you're close to a 3-gold threshold near game end.</div>
+    </div>
+  </div>
+
+  <!-- ══ 23. SOLO / COOP ══ -->
+  <div class="card guide-entry" id="g-solo" data-keywords="solo coop cooperative single player one alone">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">23</span> Solo &amp; Cooperative Mode</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="guide-rule-box">
+        <h4>Solo Mode</h4>
+        <p>Play as a single witcher against the monster trail. The game ends on the same triggers as multiplayer. You win by reaching the <strong>solo VP target</strong> (printed separately on the round tracker) before the trail ends. Reduced board size; harder monsters appear earlier on the trail.</p>
+      </div>
+      <div class="guide-rule-box mt1">
+        <h4>Cooperative Mode (variant)</h4>
+        <p>All players work together against an <strong>expanded monster trail</strong> with more powerful monsters. Instead of competing for VP, players share a collective goal: defeat a set number of trail monsters before the trail is exhausted. If you succeed, all players win together.</p>
+        <ul class="guide-list mt1">
+          <li>Players may freely share gold and potions at the same location</li>
+          <li>Two witchers at the same location can fight a monster together — each contributes cards and dice</li>
+          <li>Damage is split between participating witchers by mutual agreement</li>
+        </ul>
+      </div>
+      <div class="guide-tip mt1">💡 For competitive play, solo mode is excellent for learning the game. Try it before your first multiplayer session — it teaches combat and deck building without the pressure of competition.</div>
+    </div>
+  </div>
+
+  <!-- ══ 24. MONSTER BESTIARY ══ -->
+  <div class="card guide-entry" id="g-monsters" data-keywords="bestiary monster list stats hp weakness ability all monsters">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">24</span> Monster Bestiary</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <p class="text-sec mb2" style="font-size:.85rem;">Key monsters from the base game. HP and VP values are for reference — your edition may vary slightly.</p>
+      <table class="guide-table">
+        <thead><tr><th>Monster</th><th>Type</th><th>Lvl</th><th>HP</th><th>Weakness</th><th>Key Ability</th></tr></thead>
+        <tbody>
+          <tr><td>Nekker</td><td>Beast</td><td>1</td><td>8</td><td>Silver</td><td>Pack Hunter — double attack if others present</td></tr>
+          <tr><td>Drowner</td><td>Drowner</td><td>1</td><td>10</td><td>Igni</td><td>Water Drag — forces water terrain movement</td></tr>
+          <tr><td>Ghoul</td><td>Necrophage</td><td>2</td><td>12</td><td>Yrden</td><td>Corpse Eater — heals near dead enemies</td></tr>
+          <tr><td>Wraith</td><td>Specter</td><td>2</td><td>10</td><td>Yrden</td><td>Phase Shift — 30% chance to dodge hits</td></tr>
+          <tr><td>Rotfiend</td><td>Necrophage</td><td>2</td><td>11</td><td>Necrophage Oil</td><td>Death Explosion — 3 damage to adjacent on death</td></tr>
+          <tr><td>Arachas</td><td>Insectoid</td><td>2</td><td>13</td><td>Insectoid Oil</td><td>Web Trap — reduces your movement</td></tr>
+          <tr><td>Alghoul</td><td>Necrophage</td><td>2</td><td>14</td><td>Necrophage Oil</td><td>Regeneration — recovers 1 HP per round</td></tr>
+          <tr><td>Werewolf</td><td>Cursed One</td><td>3</td><td>16</td><td>Full Moon Dust</td><td>Frenzy — +2 attack during blood moon phase</td></tr>
+          <tr><td>Griffin</td><td>Hybrid</td><td>3</td><td>15</td><td>Dimeritium</td><td>Wind Blast — pushes you back one space</td></tr>
+          <tr><td>Cyclops</td><td>Ogroid</td><td>3</td><td>20</td><td>Quen</td><td>Boulder Smash — destroys all your shields</td></tr>
+          <tr><td>Katakan</td><td>Vampire</td><td>3</td><td>14</td><td>Vampire Oil</td><td>Mist Form — 50% chance to dodge each hit</td></tr>
+          <tr><td>Wyvern</td><td>Draconid</td><td>3</td><td>16</td><td>Grapeshot Bomb</td><td>Aerial Strike — ignores shields on first attack</td></tr>
+          <tr><td>Basilisk</td><td>Draconid</td><td>4</td><td>18</td><td>Specter Oil</td><td>Petrify Gaze — target skips next action</td></tr>
+          <tr><td>Striga</td><td>Cursed One</td><td>4</td><td>20</td><td>Cursed Oil</td><td>Rage — double damage below 5 HP</td></tr>
+          <tr><td>Alps</td><td>Vampire</td><td>4</td><td>16</td><td>Vampire Oil</td><td>Drain Life — heals for damage dealt</td></tr>
+          <tr><td>Leshen</td><td>Relict</td><td>5</td><td>24</td><td>Axii</td><td>Forest King — summons crows &amp; wolves</td></tr>
+          <tr><td>Ice Giant</td><td>Ogroid</td><td>5</td><td>28</td><td>Igni</td><td>Blizzard — all witchers lose 1 HP per round</td></tr>
+          <tr><td>Bruxa</td><td>Vampire</td><td>5</td><td>20</td><td>Vampire Oil</td><td>Shriek — discards cards from your hand</td></tr>
+        </tbody>
+      </table>
+      <div class="guide-tip mt1">💡 Weakness matching usually triggers a bonus "+2 ⚔" effect when you play the matching card type. Always check the monster card for its specific weakness interaction.</div>
+    </div>
+  </div>
+
+  <!-- ══ 25. LOCATIONS ══ -->
+  <div class="card guide-entry" id="g-locations" data-keywords="location place city town fortress kaer morhen oxenfurt novigrad temeria">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">25</span> Location Reference</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <table class="guide-table">
+        <thead><tr><th>Location</th><th>Type</th><th>Key Actions Available</th></tr></thead>
+        <tbody>
+          <tr><td>Kaer Morhen</td><td>🏰 Witcher Fortress</td><td>Enhanced meditation, free card removal, potion crafting, level-up consultation</td></tr>
+          <tr><td>Oxenfurt</td><td>🏙️ Major City</td><td>Train (buy cards), 5-card row bonus, sell trophies for gold, accept quests</td></tr>
+          <tr><td>Novigrad</td><td>🏙️ Major City</td><td>Train (buy cards), accept quests, potion market, hire information about monsters</td></tr>
+          <tr><td>Vizima</td><td>🏙️ Capital City</td><td>Train, accept high-value quests (3 VP+), temerian court bonuses</td></tr>
+          <tr><td>Crow's Perch</td><td>🏰 Stronghold</td><td>Accept contracts, buy combat gear, get battle preparations</td></tr>
+          <tr><td>Tretogor</td><td>🏙️ City</td><td>Train (Redania region), sell trophies, notice board (quest acceptance)</td></tr>
+          <tr><td>Gors Velen</td><td>🏙️ Port City</td><td>Buy cards, potions market, sea travel shortcut</td></tr>
+          <tr><td>Blue Mountains</td><td>⛰️ Mountain Pass</td><td>Explore (high-risk events), chance for Grand Mutagen</td></tr>
+          <tr><td>Pontar Valley</td><td>🌲 Forest Region</td><td>Multiple explore locations, connected monster spawns</td></tr>
+          <tr><td>Skellige (expansion)</td><td>🌊 Island Chain</td><td>Unique exploration decks, Viking-themed monster encounters</td></tr>
+        </tbody>
+      </table>
+      <div class="guide-rule-box mt1">
+        <h4>City Card Row Bonus</h4>
+        <p>Some cities (notably Oxenfurt) give you access to a <strong>larger common card row</strong> (up to 7–8 cards instead of 6) when training there. This dramatically increases your chances of finding the card you need.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 26. GLOSSARY ══ -->
+  <div class="card guide-entry" id="g-glossary" data-keywords="glossary terms definitions rules keywords reference">
+    <div class="card-header" onclick="UI.toggleCard(this)">
+      <h2><span class="guide-num">26</span> Glossary &amp; Quick Reference</h2><span class="collapse-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="g2">
+        <div>
+          <dl class="guide-glossary">
+            <dt>Action Token</dt><dd>Spent to perform one action on your turn. You have 2 per turn.</dd>
+            <dt>Common Row</dt><dd>The 6 face-up purchasable cards available to all players.</dd>
+            <dt>Deck Cycling</dt><dd>The process of playing through your deck and reshuffling — happens naturally.</dd>
+            <dt>Discard Pile</dt><dd>Cards you've played or discarded this turn. Shuffled into new deck when needed.</dd>
+            <dt>Exploration Deck</dt><dd>Location-specific deck of event cards drawn when you Explore there.</dd>
+            <dt>First Player Token</dt><dd>Determines turn order; passes clockwise each round.</dd>
+            <dt>Hand Limit</dt><dd>Max cards in hand at end of turn (usually 3–4). Excess must be discarded.</dd>
+            <dt>HP (Hit Points)</dt><dd>Your witcher's current health. Reach 0 = knocked out.</dd>
+            <dt>Knocked Out</dt><dd>Reduced to 0 HP — lose gold, reset to half HP, return to nearest base.</dd>
+            <dt>Level</dt><dd>Your witcher's power tier (1–5). Higher level = better perks, can fight harder monsters.</dd>
+            <dt>Max HP</dt><dd>Your HP ceiling. Healing cannot exceed this value.</dd>
+            <dt>Monster Trail</dt><dd>The track where monsters appear and advance. Game ends when exhausted.</dd>
+          </dl>
+        </div>
+        <div>
+          <dl class="guide-glossary">
+            <dt>Mutagen</dt><dd>Permanent passive bonus token equipped to your character board.</dd>
+            <dt>Potion Slot</dt><dd>Max potions you can hold simultaneously (usually 3).</dd>
+            <dt>Reaction Card</dt><dd>A card (yours or monster's) played outside of your normal turn.</dd>
+            <dt>Remove (card)</dt><dd>Permanently remove a card from your deck — it goes out of the game entirely.</dd>
+            <dt>Shield (🛡)</dt><dd>Blocks 1 point of monster damage this combat round.</dd>
+            <dt>Sign</dt><dd>One of 5 witcher magic abilities (Aard, Igni, Quen, Yrden, Axii).</dd>
+            <dt>Starter Deck</dt><dd>Your 12 initial cards, unique to your witcher character.</dd>
+            <dt>Sword (⚔)</dt><dd>Deals 1 point of damage to the monster this combat round.</dd>
+            <dt>Trail Monster</dt><dd>A monster currently on the monster trail; defeating it grants bonus VP.</dd>
+            <dt>Trophy Token</dt><dd>Proof of a monster kill; used in end-game scoring by category.</dd>
+            <dt>VP (Victory Points)</dt><dd>The game's scoring currency. Most VP at game end wins.</dd>
+            <dt>Witcher Level</dt><dd>Advances when you defeat a monster ≥ your level. Grants perks and VP.</dd>
+          </dl>
+        </div>
+      </div>
+      <div class="guide-rule-box mt2">
+        <h4>⚡ Quick Combat Reference</h4>
+        <div class="g2">
+          <div>
+            <p><strong>Your damage to monster:</strong> Total ⚔ symbols (cards + dice)</p>
+            <p><strong>Monster damage to you:</strong> Monster attack − your 🛡 symbols</p>
+            <p><strong>Flee cost:</strong> 2 HP minimum</p>
+          </div>
+          <div>
+            <p><strong>Knocked out:</strong> Lose carried gold, reset HP to 50%, return to nearest base</p>
+            <p><strong>Victory:</strong> Take trophy token + gold reward on monster card</p>
+          </div>
+        </div>
+      </div>
+      <div class="guide-rule-box mt1">
+        <h4>🔄 Turn Summary</h4>
+        <p>1. Take 2 actions (Travel / Explore / Fight / Train / Meditate / Quest / Duel)&nbsp;&nbsp;→&nbsp;&nbsp;2. Discard played cards + excess hand cards&nbsp;&nbsp;→&nbsp;&nbsp;3. Draw back up to hand limit</p>
+      </div>
+      <div class="guide-rule-box mt1">
+        <h4>📊 Recommended Strategy by School</h4>
+        <ul class="guide-list">
+          <li><strong>Wolf:</strong> Level fast → Level 4 perk → then hunt high-level monsters for 4–5 VP each</li>
+          <li><strong>Cat:</strong> Rush trophies early, dominate 1–2 monster categories, sprint to end game</li>
+          <li><strong>Bear:</strong> Take risky fights other witchers avoid (high HP = can survive) — tackle Level 4/5 monsters early</li>
+          <li><strong>Griffin:</strong> Build sign deck, chain sign combos in combat, maximize card draw each turn</li>
+          <li><strong>Viper:</strong> Focus on quests + PvP opportunities; use poison to weaken monsters for quick kills</li>
+          <li><strong>Manticore:</strong> Stockpile potions, fight multiple times per area, use potions to compensate for weaker cards</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
 </section>
 
 </div><!-- /#main -->
@@ -1882,6 +3145,39 @@ const App = (() => {
 
 /* ── bootstrap ── */
 document.addEventListener('DOMContentLoaded', () => App.init());
+
+/* =====================================================
+   GUIDE MODULE
+   ===================================================== */
+const Guide = (() => {
+  // Scroll to a guide section and expand it if collapsed
+  function jump(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.classList.contains('collapsed')) el.classList.remove('collapsed');
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Filter guide entries by keyword
+  function filter(q) {
+    const entries = document.querySelectorAll('.guide-entry');
+    const term = q.trim().toLowerCase();
+    if (!term) {
+      entries.forEach(e => e.classList.remove('hidden'));
+      return;
+    }
+    entries.forEach(e => {
+      const text    = e.textContent.toLowerCase();
+      const keywords = (e.dataset.keywords || '').toLowerCase();
+      const match   = text.includes(term) || keywords.includes(term);
+      e.classList.toggle('hidden', !match);
+      // Expand matched entries so content is visible
+      if (match) e.classList.remove('collapsed');
+    });
+  }
+
+  return { jump, filter };
+})();
 </script>
 </body>
 </html>
