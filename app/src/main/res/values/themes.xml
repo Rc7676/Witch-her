@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Hexfall" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">#FF120D1C</item>
+        <item name="android:statusBarColor">#FF120D1C</item>
+        <item name="android:navigationBarColor">#FF120D1C</item>
+    </style>
+</resources>
