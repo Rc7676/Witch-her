@@ -31,6 +31,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -64,8 +65,6 @@ fun MapScreen(vm: GameViewModel) {
         RunHeader(vm, onDeck = { showDeck = true })
 
         val scroll = rememberScrollState()
-        LaunchedEffect(Unit) { scroll.scrollTo(scroll.maxValue) }
-
         val totalRows = SpireMap.ROWS + 1
         val mapHeight = (totalRows * ROW_HEIGHT_DP).dp
 
@@ -86,6 +85,18 @@ fun MapScreen(vm: GameViewModel) {
                 val x = (node.col + 0.5f) / SpireMap.COLS * widthPx
                 val y = mapHeightPx - (node.row + 0.5f) * rowHeightPx
                 return Offset(x, y)
+            }
+
+            // Keep the witch's current position (or the start) in view.
+            // viewport = content height - max scroll, so this needs maxValue.
+            LaunchedEffect(scroll.maxValue) {
+                if (scroll.maxValue > 0) {
+                    val viewport = mapHeightPx - scroll.maxValue
+                    val row = run.currentNodeId?.let { map.node(it).row } ?: -1
+                    val nodeY = mapHeightPx - (row + 0.5f) * rowHeightPx
+                    val target = (nodeY - viewport + 1.5f * rowHeightPx).toInt()
+                    scroll.scrollTo(target.coerceIn(0, scroll.maxValue))
+                }
             }
 
             Box(
@@ -145,6 +156,17 @@ fun MapScreen(vm: GameViewModel) {
                 }
             }
         }
+
+        Text(
+            "⚔ Fight   👹 Elite   ❓ Event   💰 Shop   🔥 Rest   🎁 Treasure   💀 Boss",
+            color = HexfallColors.parchment.copy(alpha = 0.55f),
+            fontSize = 10.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(HexfallColors.surface)
+                .padding(vertical = 6.dp),
+        )
     }
 
     if (showDeck) {

@@ -136,6 +136,9 @@ class CombatEngine(
     }
 
     private fun takeEnemyTurn(enemy: EnemyCombatant) {
+        // An earlier enemy's turn may have ended the fight, or thorns may
+        // have killed this enemy before it could act.
+        if (result != null || !enemy.alive) return
         enemy.block = 0
         val poison = enemy.statusAmount(StatusType.POISON)
         if (poison > 0) {
@@ -191,10 +194,12 @@ class CombatEngine(
         val damage = attackDamage(enemy, player, base)
         val lost = player.takeDamage(damage)
         log += "${enemy.def.name} hits you for $damage."
-        val thorns = player.statusAmount(StatusType.THORNS)
-        if (thorns > 0 && lost >= 0) {
-            enemy.takeDamage(thorns)
-            log += "Thorns strike back for $thorns."
+        if (lost > 0 || damage > 0) {
+            val thorns = player.statusAmount(StatusType.THORNS)
+            if (thorns > 0) {
+                enemy.takeDamage(thorns)
+                log += "Thorns strike back for $thorns."
+            }
         }
         checkCombatEnd()
     }

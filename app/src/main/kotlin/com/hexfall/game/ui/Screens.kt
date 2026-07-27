@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -109,7 +110,10 @@ fun RewardScreen(vm: GameViewModel, screen: GameScreen.Reward) {
         if (!vm.rewardCardTaken) {
             Text("Add a card to your grimoire:", fontSize = 14.sp, color = HexfallColors.parchment)
             Spacer(Modifier.height(10.dp))
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Row(
+                Modifier.horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
                 reward.cardChoices.forEach { def ->
                     CardView(def = def, onClick = { vm.takeRewardCard(def) })
                 }
@@ -132,6 +136,18 @@ fun RewardScreen(vm: GameViewModel, screen: GameScreen.Reward) {
 fun EventScreen(vm: GameViewModel, screen: GameScreen.Event) {
     val run = vm.run ?: return
     val event = screen.def
+    Column(Modifier.fillMaxSize()) {
+        RunHeader(vm)
+        EventBody(vm, run, event)
+    }
+}
+
+@Composable
+private fun EventBody(
+    vm: GameViewModel,
+    run: com.hexfall.core.RunState,
+    event: com.hexfall.core.EventDef,
+) {
     Column(
         Modifier
             .fillMaxSize()
@@ -139,8 +155,7 @@ fun EventScreen(vm: GameViewModel, screen: GameScreen.Event) {
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        RunHeader(vm)
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(12.dp))
         Text("❓", fontSize = 44.sp)
         Text(
             event.title,

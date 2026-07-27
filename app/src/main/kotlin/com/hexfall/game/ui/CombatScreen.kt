@@ -62,9 +62,10 @@ private fun statusLine(combatant: Combatant): String =
 fun CombatScreen(vm: GameViewModel) {
     val engine = vm.combat ?: return
     var selected by remember { mutableStateOf<CardInstance?>(null) }
+    var showDeck by remember { mutableStateOf(false) }
 
     Column(Modifier.fillMaxSize()) {
-        RunHeader(vm)
+        RunHeader(vm, onDeck = { showDeck = true })
 
         // --- Enemies -----------------------------------------------------
         Row(
@@ -127,6 +128,27 @@ fun CombatScreen(vm: GameViewModel) {
             }
         }
 
+        // --- Combat log --------------------------------------------------
+        if (engine.log.isNotEmpty()) {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 2.dp)
+                    .background(Color.Black.copy(alpha = 0.25f), RoundedCornerShape(8.dp))
+                    .padding(horizontal = 10.dp, vertical = 4.dp),
+            ) {
+                engine.log.takeLast(3).forEach { line ->
+                    Text(
+                        line,
+                        color = HexfallColors.parchment.copy(alpha = 0.65f),
+                        fontSize = 10.sp,
+                        lineHeight = 13.sp,
+                        maxLines = 1,
+                    )
+                }
+            }
+        }
+
         // --- Player row --------------------------------------------------
         Row(
             Modifier
@@ -184,8 +206,12 @@ fun CombatScreen(vm: GameViewModel) {
 
         // --- Hand --------------------------------------------------------
         Text(
-            if (selected != null) "Tap an enemy to strike" else "Turn ${engine.turn}" +
-                "   Draw ${engine.drawPile.size} · Discard ${engine.discardPile.size}",
+            if (selected != null) {
+                "Tap an enemy to strike"
+            } else {
+                "Turn ${engine.turn}   Draw ${engine.drawPile.size} · " +
+                    "Discard ${engine.discardPile.size} · Exhaust ${engine.exhaustPile.size}"
+            },
             color = HexfallColors.parchment.copy(alpha = 0.6f),
             fontSize = 11.sp,
             modifier = Modifier.padding(horizontal = 14.dp),
@@ -216,6 +242,17 @@ fun CombatScreen(vm: GameViewModel) {
                     },
                 )
             }
+        }
+    }
+
+    if (showDeck) {
+        val run = vm.run
+        if (run != null) {
+            DeckDialog(
+                title = "Your Deck (${run.deck.size})",
+                cards = run.deck,
+                onDismiss = { showDeck = false },
+            )
         }
     }
 }
