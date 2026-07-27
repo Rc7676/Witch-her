@@ -14,7 +14,7 @@ class RunSimulationTest {
 
     private data class RunOutcome(val victory: Boolean, val floors: Int)
 
-    /** Greedy policy: block when threatened, dump attacks into enemy 0. */
+    /** Greedy policy: dump the most expensive playable cards into enemy 0. */
     private fun autoCombat(run: RunState, enemies: List<EnemyDef>): CombatResult {
         val engine = CombatEngine(run, enemies, run.rng)
         var safety = 0
@@ -31,7 +31,7 @@ class RunSimulationTest {
             if (engine.result == null) engine.endTurn()
 
             assertTrue(engine.player.hp <= engine.player.maxHp, "hp above max")
-            assertTrue(engine.energy >= 0, "negative energy")
+            assertTrue(engine.mana >= 0, "negative mana")
             engine.enemies.forEach { assertTrue(it.alive, "dead enemy lingering") }
         }
         assertNotNull(engine.result, "combat did not terminate in 300 turns")
@@ -67,7 +67,7 @@ class RunSimulationTest {
                     }
                     val reward = CombatReward.forCombat(run, run.rng, elite)
                     run.gold += reward.gold
-                    reward.cardChoices.firstOrNull { it.type == CardType.ATTACK }
+                    reward.cardChoices.firstOrNull { it.type == CardType.SPELL_ATTACK }
                         ?.let { run.addCard(it) }
                     reward.relic?.let { run.addRelic(it) }
                 }
@@ -102,12 +102,11 @@ class RunSimulationTest {
     fun `two hundred simulated runs complete cleanly`() {
         var wins = 0
         var totalFloors = 0
-        var deaths = 0
         val runs = 200
 
         for (seed in 0 until runs) {
             val outcome = simulateRun(seed.toLong())
-            if (outcome.victory) wins++ else deaths++
+            if (outcome.victory) wins++
             totalFloors += outcome.floors
         }
 
@@ -124,11 +123,9 @@ class RunSimulationTest {
 
     @Test
     fun `all card effects resolve against every enemy type`() {
-        // Every playable card is force-played at least once against each
-        // enemy, exercising each effect path.
         for (enemyDef in listOf(
-            EnemyLibrary.gloomRat, EnemyLibrary.cultist, EnemyLibrary.stoneGolem,
-            EnemyLibrary.paleLich,
+            EnemyLibrary.moonfangWolf, EnemyLibrary.covenTraitor,
+            EnemyLibrary.boneColossus, EnemyLibrary.hollowQueen,
         )) {
             for (cardDef in CardLibrary.rewardPool) {
                 val run = RunState(99L)
@@ -143,25 +140,27 @@ class RunSimulationTest {
     }
 
     @Test
-    fun `every enemy ai produces valid moves for twenty turns`() {
+    fun `every enemy ai produces valid moves across turns and moon phases`() {
         val allEnemies = listOf(
-            EnemyLibrary.gloomRat, EnemyLibrary.boneSprite, EnemyLibrary.marshSlime,
-            EnemyLibrary.cultist, EnemyLibrary.direWolf, EnemyLibrary.cryptSpider,
-            EnemyLibrary.hollowKnight, EnemyLibrary.hedgeWitch, EnemyLibrary.stoneGolem,
-            EnemyLibrary.boneKnight, EnemyLibrary.paleLich,
+            EnemyLibrary.moonfangWolf, EnemyLibrary.bogWisp, EnemyLibrary.plagueRat,
+            EnemyLibrary.moonMoth, EnemyLibrary.graveRobber, EnemyLibrary.thornSprite,
+            EnemyLibrary.hollowArmor, EnemyLibrary.covenTraitor, EnemyLibrary.barrowWight,
+            EnemyLibrary.boneColossus, EnemyLibrary.bloodAlchemist, EnemyLibrary.hollowQueen,
         )
         val rng = Random(5)
         for (def in allEnemies) {
             val enemy = EnemyCombatant(def, def.maxHp)
             for (turn in 0 until 20) {
-                val move = def.ai(turn, rng, enemy)
-                when (move) {
-                    is EnemyMove.Attack -> assertTrue(move.damage > 0 && move.times > 0)
-                    is EnemyMove.Defend -> assertTrue(move.block > 0)
-                    is EnemyMove.AttackDefend -> assertTrue(move.damage > 0 && move.block > 0)
-                    is EnemyMove.Buff -> assertTrue(move.amount > 0)
-                    is EnemyMove.Debuff -> assertTrue(move.amount > 0)
-                    is EnemyMove.HealSelf -> assertTrue(move.amount > 0)
+                for (moon in MoonPhase.entries) {
+                    when (val move = def.ai(turn, rng, enemy, moon)) {
+                        is EnemyMove.Attack -> assertTrue(move.damage > 0 && move.times > 0)
+                        is EnemyMove.Guard -> assertTrue(move.ward > 0)
+                        is EnemyMove.AttackGuard -> assertTrue(move.damage > 0 && move.ward > 0)
+                        is EnemyMove.Buff -> assertTrue(move.amount > 0)
+                        is EnemyMove.Debuff -> assertTrue(move.amount > 0)
+                        is EnemyMove.HealSelf -> assertTrue(move.amount > 0)
+                        is EnemyMove.Steal -> assertTrue(move.gold > 0)
+                    }
                 }
             }
         }

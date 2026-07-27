@@ -1,11 +1,13 @@
 package com.hexfall.game.ui
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -46,11 +49,12 @@ private fun intentText(engine: CombatEngine, enemy: EnemyCombatant): String =
             val dmg = engine.intentDamage(enemy) ?: move.damage
             if (move.times > 1) "⚔ $dmg×${move.times}" else "⚔ $dmg"
         }
-        is EnemyMove.Defend -> "🛡 ${move.block}"
-        is EnemyMove.AttackDefend -> "⚔ ${engine.intentDamage(enemy)} 🛡 ${move.block}"
+        is EnemyMove.Guard -> "🛡 ${move.ward}"
+        is EnemyMove.AttackGuard -> "⚔ ${engine.intentDamage(enemy)} 🛡 ${move.ward}"
         is EnemyMove.Buff -> "↑ ${move.label}"
         is EnemyMove.Debuff -> "☠ ${move.label}"
         is EnemyMove.HealSelf -> "✚ ${move.label}"
+        is EnemyMove.Steal -> "⚔ ${engine.intentDamage(enemy)} 🪙 ${move.label}"
     }
 
 private fun statusLine(combatant: Combatant): String =
@@ -64,183 +68,236 @@ fun CombatScreen(vm: GameViewModel) {
     var selected by remember { mutableStateOf<CardInstance?>(null) }
     var showDeck by remember { mutableStateOf(false) }
 
-    Column(Modifier.fillMaxSize()) {
-        RunHeader(vm, onDeck = { showDeck = true })
+    NightScene(moon = engine.moon, starSeed = 11) {
+        Column(Modifier.fillMaxSize()) {
+            RunHeader(vm, onDeck = { showDeck = true })
 
-        // --- Enemies -----------------------------------------------------
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            engine.enemies.forEachIndexed { index, enemy ->
-                val targeting = selected?.def?.needsTarget == true
-                Column(
-                    Modifier
-                        .weight(1f)
-                        .border(
-                            width = if (targeting) 2.5.dp else 1.dp,
-                            color = if (targeting) HexfallColors.gold else Color(0x33EADFC8),
-                            shape = RoundedCornerShape(12.dp),
-                        )
-                        .background(HexfallColors.surface, RoundedCornerShape(12.dp))
-                        .clickable(enabled = targeting) {
-                            selected?.let { card ->
-                                vm.playCard(card, index)
-                            }
-                            selected = null
-                        }
-                        .padding(10.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Text(
-                        intentText(engine, enemy),
-                        color = HexfallColors.energyAmber,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    Text("👹", fontSize = 34.sp)
-                    Text(
-                        enemy.def.name,
-                        color = HexfallColors.parchment,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    StatBar(enemy.hp, enemy.maxHp, HexfallColors.hpRed, Modifier.fillMaxWidth())
-                    if (enemy.block > 0) {
-                        Text(
-                            "🛡 ${enemy.block}",
-                            color = HexfallColors.blockBlue,
-                            fontSize = 11.sp,
-                        )
-                    }
-                    val statuses = statusLine(enemy)
-                    if (statuses.isNotEmpty()) {
-                        Text(statuses, fontSize = 10.sp, color = HexfallColors.poisonGreen)
-                    }
-                }
-            }
-        }
-
-        // --- Combat log --------------------------------------------------
-        if (engine.log.isNotEmpty()) {
-            Column(
+            // Moon phase banner.
+            Row(
                 Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 2.dp)
-                    .background(Color.Black.copy(alpha = 0.25f), RoundedCornerShape(8.dp))
-                    .padding(horizontal = 10.dp, vertical = 4.dp),
+                    .padding(horizontal = 12.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                engine.log.takeLast(3).forEach { line ->
-                    Text(
-                        line,
-                        color = HexfallColors.parchment.copy(alpha = 0.65f),
-                        fontSize = 10.sp,
-                        lineHeight = 13.sp,
-                        maxLines = 1,
-                    )
-                }
-            }
-        }
-
-        // --- Player row --------------------------------------------------
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Box(
-                Modifier
-                    .size(46.dp)
-                    .background(HexfallColors.energyAmber, CircleShape),
-                contentAlignment = Alignment.Center,
-            ) {
+                MoonIcon(engine.moon, Modifier.size(18.dp))
+                Spacer(Modifier.width(6.dp))
                 Text(
-                    "${engine.energy}",
-                    color = Color.Black,
-                    fontSize = 20.sp,
+                    engine.moon.displayName + "  ·  Turn ${engine.turn}",
+                    color = Art.moonGlow.copy(alpha = 0.85f),
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                 )
             }
-            Spacer(Modifier.width(10.dp))
-            Column(Modifier.weight(1f)) {
-                StatBar(
-                    engine.player.hp,
-                    engine.player.maxHp,
-                    HexfallColors.hpRed,
-                    Modifier.fillMaxWidth(),
-                )
-                Row {
-                    if (engine.player.block > 0) {
-                        Text(
-                            "🛡 ${engine.player.block}  ",
-                            color = HexfallColors.blockBlue,
-                            fontSize = 11.sp,
-                        )
-                    }
-                    Text(
-                        statusLine(engine.player),
-                        fontSize = 11.sp,
-                        color = HexfallColors.parchment,
-                    )
-                }
-            }
-            Spacer(Modifier.width(10.dp))
-            Button(
-                onClick = {
-                    selected = null
-                    vm.endTurn()
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = HexfallColors.purple),
-            ) {
-                Text("End Turn", fontSize = 13.sp)
-            }
-        }
 
-        // --- Hand --------------------------------------------------------
-        Text(
-            if (selected != null) {
-                "Tap an enemy to strike"
-            } else {
-                "Turn ${engine.turn}   Draw ${engine.drawPile.size} · " +
-                    "Discard ${engine.discardPile.size} · Exhaust ${engine.exhaustPile.size}"
-            },
-            color = HexfallColors.parchment.copy(alpha = 0.6f),
-            fontSize = 11.sp,
-            modifier = Modifier.padding(horizontal = 14.dp),
-        )
-        LazyRow(
-            Modifier
-                .fillMaxWidth()
-                .height(166.dp)
-                .padding(vertical = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 12.dp),
-        ) {
-            items(engine.hand, key = { it.uid }) { card ->
-                CardView(
-                    def = card.def,
-                    enabled = engine.canPlay(card),
-                    selected = card == selected,
-                    onClick = {
-                        when {
-                            !engine.canPlay(card) -> Unit
-                            card == selected -> selected = null
-                            card.def.needsTarget -> selected = card
-                            else -> {
+            // --- Enemies -------------------------------------------------
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(horizontal = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                engine.enemies.forEachIndexed { index, enemy ->
+                    val targeting = selected?.def?.needsTarget == true
+                    Column(
+                        Modifier
+                            .weight(1f)
+                            .clickable(enabled = targeting) {
+                                selected?.let { card -> vm.playCard(card, index) }
                                 selected = null
-                                vm.playCard(card, null)
+                            },
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Box(
+                            Modifier
+                                .background(Color(0xB30D0918), RoundedCornerShape(10.dp))
+                                .border(
+                                    1.dp,
+                                    HexfallColors.energyAmber.copy(alpha = 0.5f),
+                                    RoundedCornerShape(10.dp),
+                                )
+                                .padding(horizontal = 8.dp, vertical = 3.dp),
+                        ) {
+                            Text(
+                                intentText(engine, enemy),
+                                color = HexfallColors.energyAmber,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                            )
+                        }
+                        Spacer(Modifier.height(4.dp))
+                        Box(contentAlignment = Alignment.Center) {
+                            if (targeting) {
+                                Canvas(Modifier.size(96.dp)) {
+                                    drawCircle(
+                                        brush = Brush.radialGradient(
+                                            listOf(
+                                                HexfallColors.gold.copy(alpha = 0.45f),
+                                                Color.Transparent,
+                                            ),
+                                        ),
+                                        radius = size.minDimension / 2f,
+                                    )
+                                }
+                            }
+                            EnemyFigure(enemy.def.id, Modifier.size(88.dp))
+                        }
+                        Text(
+                            enemy.def.name,
+                            color = HexfallColors.parchment,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            maxLines = 1,
+                        )
+                        Spacer(Modifier.height(3.dp))
+                        StatBar(enemy.hp, enemy.maxHp, HexfallColors.hpRed, Modifier.fillMaxWidth())
+                        Row {
+                            if (enemy.ward > 0) {
+                                Text(
+                                    "🛡${enemy.ward} ",
+                                    color = HexfallColors.blockBlue,
+                                    fontSize = 10.sp,
+                                )
+                            }
+                            val statuses = statusLine(enemy)
+                            if (statuses.isNotEmpty()) {
+                                Text(
+                                    statuses,
+                                    fontSize = 10.sp,
+                                    color = HexfallColors.poisonGreen,
+                                    maxLines = 1,
+                                )
                             }
                         }
+                    }
+                }
+            }
+
+            // --- Combat log ----------------------------------------------
+            if (engine.log.isNotEmpty()) {
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp, vertical = 2.dp)
+                        .background(Color(0x990D0918), RoundedCornerShape(8.dp))
+                        .padding(horizontal = 10.dp, vertical = 4.dp),
+                ) {
+                    engine.log.takeLast(3).forEach { line ->
+                        Text(
+                            line,
+                            color = HexfallColors.parchment.copy(alpha = 0.65f),
+                            fontSize = 10.sp,
+                            lineHeight = 13.sp,
+                            maxLines = 1,
+                        )
+                    }
+                }
+            }
+
+            // --- Player row ----------------------------------------------
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Canvas(Modifier.size(44.dp)) { drawWitch(tint = Color(0xFF1A1130)) }
+                Spacer(Modifier.width(6.dp))
+                Box(
+                    Modifier
+                        .size(46.dp)
+                        .background(
+                            Brush.radialGradient(
+                                listOf(Color(0xFFFFE29A), HexfallColors.energyAmber),
+                            ),
+                            CircleShape,
+                        )
+                        .border(1.5.dp, Color(0xFF7A5A1E), CircleShape),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        "${engine.mana}",
+                        color = Color(0xFF3A2A08),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+                Spacer(Modifier.width(10.dp))
+                Column(Modifier.weight(1f)) {
+                    StatBar(
+                        engine.player.hp,
+                        engine.player.maxHp,
+                        HexfallColors.hpRed,
+                        Modifier.fillMaxWidth(),
+                    )
+                    Row {
+                        if (engine.player.ward > 0) {
+                            Text(
+                                "🛡 ${engine.player.ward}  ",
+                                color = HexfallColors.blockBlue,
+                                fontSize = 11.sp,
+                            )
+                        }
+                        Text(
+                            statusLine(engine.player),
+                            fontSize = 11.sp,
+                            color = HexfallColors.parchment,
+                            maxLines = 1,
+                        )
+                    }
+                }
+                Spacer(Modifier.width(10.dp))
+                Button(
+                    onClick = {
+                        selected = null
+                        vm.endTurn()
                     },
-                )
+                    colors = ButtonDefaults.buttonColors(containerColor = HexfallColors.purple),
+                ) {
+                    Text("End Turn", fontSize = 13.sp)
+                }
+            }
+
+            // --- Hand ----------------------------------------------------
+            Text(
+                if (selected != null) {
+                    "Tap an enemy to strike"
+                } else {
+                    "Draw ${engine.drawPile.size} · Discard ${engine.discardPile.size} · " +
+                        "Exhaust ${engine.exhaustPile.size}"
+                },
+                color = HexfallColors.parchment.copy(alpha = 0.6f),
+                fontSize = 11.sp,
+                modifier = Modifier.padding(horizontal = 14.dp),
+            )
+            LazyRow(
+                Modifier
+                    .fillMaxWidth()
+                    .height(176.dp)
+                    .padding(vertical = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(horizontal = 12.dp),
+            ) {
+                items(engine.hand, key = { it.uid }) { card ->
+                    CardView(
+                        def = card.def,
+                        enabled = engine.canPlay(card),
+                        selected = card == selected,
+                        onClick = {
+                            when {
+                                !engine.canPlay(card) -> Unit
+                                card == selected -> selected = null
+                                card.def.needsTarget -> selected = card
+                                else -> {
+                                    selected = null
+                                    vm.playCard(card, null)
+                                }
+                            }
+                        },
+                    )
+                }
             }
         }
     }
@@ -249,7 +306,7 @@ fun CombatScreen(vm: GameViewModel) {
         val run = vm.run
         if (run != null) {
             DeckDialog(
-                title = "Your Deck (${run.deck.size})",
+                title = "Your Grimoire (${run.deck.size})",
                 cards = run.deck,
                 onDismiss = { showDeck = false },
             )

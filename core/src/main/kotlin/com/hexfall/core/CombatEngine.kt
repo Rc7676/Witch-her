@@ -6,8 +6,11 @@ import kotlin.random.Random
 enum class CombatResult { VICTORY, DEFEAT }
 
 /**
- * Runs a single combat: piles, energy, statuses, enemy turns.
- * Mutable by design; the UI takes snapshots after each action.
+ * Runs a single combat: piles, mana, the turning moon, statuses, enemy
+ * turns. Mutable by design; the UI takes snapshots after each action.
+ *
+ * Damage math is flat, not percentage-based: every hit deals
+ * base + attacker Spellpower - attacker Chill + defender Hexed.
  */
 class CombatEngine(
     private val run: RunState,
@@ -24,7 +27,9 @@ class CombatEngine(
     val discardPile: MutableList<CardInstance> = mutableListOf()
     val exhaustPile: MutableList<CardInstance> = mutableListOf()
 
-    var energy: Int = 0
+    var moon: MoonPhase = MoonPhase.WAXING
+        private set
+    var mana: Int = 0
         private set
     var turn: Int = 0
         private set
@@ -33,29 +38,34 @@ class CombatEngine(
 
     val log: MutableList<String> = mutableListOf()
 
-    private val baseEnergy: Int = 3 + if (run.hasRelic("ember_stone")) 1 else 0
-    private val drawPerTurn: Int = if (run.hasRelic("serpent_eye")) 6 else 5
+    private val baseMana: Int = 3 + if (run.hasRelic("ashen_hourglass")) 1 else 0
+    private val drawPerTurn: Int = if (run.hasRelic("owl_quill")) 6 else 5
 
     init {
-        if (run.hasRelic("blood_vial")) {
-            player.heal(2)
-            log += "Blood Vial heals 2 HP."
+        if (run.hasRelic("obsidian_figurine")) {
+            player.ward += 8
+            log += "The Obsidian Figurine grants 8 Ward."
         }
-        if (run.hasRelic("iron_talisman")) {
-            player.block += 6
-            log += "Iron Talisman grants 6 Block."
+        if (run.hasRelic("thorn_girdle")) player.applyStatus(StatusType.BRAMBLES, 3)
+        if (run.hasRelic("serpent_fang") && enemies.isNotEmpty()) {
+            val victim = enemies[rng.nextInt(enemies.size)]
+            victim.applyStatus(StatusType.VENOM, 3)
+            log += "The Serpent Fang envenoms ${victim.def.name}."
         }
-        if (run.hasRelic("whetstone")) player.applyStatus(StatusType.STRENGTH, 2)
-        if (run.hasRelic("moon_charm")) player.applyStatus(StatusType.DEXTERITY, 2)
-        if (run.hasRelic("thorn_crown")) player.applyStatus(StatusType.THORNS, 3)
-        enemies.forEach { chooseNextMove(it) }
+        if (run.hasRelic("doomkeepers_bell")) {
+            enemies.forEach { applyStatusChecked(it, StatusType.DOOM, 2) }
+        }
+        if (run.hasRelic("hexwrought_idol")) {
+            enemies.forEach { it.applyStatus(StatusType.HEXED, 3) }
+        }
+        enemies.forEach { chooseNextMove(it, moon) }
         startPlayerTurn()
     }
 
     // --- Player actions --------------------------------------------------
 
     fun canPlay(card: CardInstance): Boolean =
-        result == null && card.def.playable && card.def.cost <= energy
+        result == null && card.def.playable && card.def.cost <= mana
 
     /**
      * Plays [card] from the hand. [targetIndex] indexes [enemies] and is
@@ -69,9 +79,9 @@ class CombatEngine(
             t
         } else null
 
-        energy -= card.def.cost
+        mana -= card.def.cost
         hand.remove(card)
-        log += "You play ${card.def.name}."
+        log += "You cast ${card.def.name}."
 
         for (effect in card.def.effects) {
             resolveEffect(effect, target)
@@ -86,11 +96,11 @@ class CombatEngine(
 
     fun endTurn() {
         if (result != null) return
-        // Player end-of-turn: regen, then decaying debuffs tick down.
-        val regen = player.statusAmount(StatusType.REGEN)
-        if (regen > 0) {
-            player.heal(regen)
-            player.applyStatus(StatusType.REGEN, -1)
+        // Player end-of-turn: Regrowth, then decaying afflictions tick down.
+        val regrowth = player.statusAmount(StatusType.REGROWTH)
+        if (regrowth > 0) {
+            player.heal(regrowth)
+            player.applyStatus(StatusType.REGROWTH, -1)
         }
         player.decayStatusesAtTurnEnd()
         discardPile += hand
@@ -106,151 +116,199 @@ class CombatEngine(
 
     private fun startPlayerTurn() {
         turn++
-        player.block = 0
-        energy = baseEnergy + player.statusAmount(StatusType.ENERGIZE)
+        if (turn > 1) {
+            moon = moon.next()
+            log += "The moon turns: ${moon.displayName}."
+        }
+        player.ward = 0
+        mana = baseMana + player.statusAmount(StatusType.ATTUNED)
+        if (moon == MoonPhase.FULL && run.hasRelic("wolfpelt_cloak")) {
+            mana += 1
+            log += "The Wolfpelt Cloak stirs under the Full Moon: +1 Mana."
+        }
 
-        val decay = player.statusAmount(StatusType.DECAY)
-        if (decay > 0) {
-            player.loseHp(decay)
-            log += "Decay saps $decay HP."
+        val debt = player.statusAmount(StatusType.BLOOD_DEBT)
+        if (debt > 0) {
+            player.loseHp(debt)
+            log += "Your Blood Debt claims $debt HP."
         }
-        val poison = player.statusAmount(StatusType.POISON)
-        if (poison > 0) {
-            player.loseHp(poison)
-            player.applyStatus(StatusType.POISON, -1)
-            log += "Poison deals $poison damage to you."
-        }
-        val immolate = player.statusAmount(StatusType.IMMOLATE)
-        if (immolate > 0) {
-            log += "Flames engulf your foes for $immolate damage."
-            enemies.filter { it.alive }.forEach { it.takeDamage(immolate) }
+        tickVenom(player, "you")
+        val ember = player.statusAmount(StatusType.EMBERHEART)
+        if (ember > 0) {
+            log += "Your Emberheart burns every foe for $ember."
+            enemies.filter { it.alive }.forEach { it.takeDamage(ember) }
             cleanupDeadEnemies()
         }
 
         checkCombatEnd()
         if (result != null) return
 
-        var toDraw = drawPerTurn
-        if (turn == 1 && run.hasRelic("witch_hat")) toDraw += 2
+        var toDraw = drawPerTurn + player.statusAmount(StatusType.OMEN)
+        if (turn == 1 && run.hasRelic("scryers_orb")) toDraw += 2
         draw(toDraw)
     }
 
     private fun takeEnemyTurn(enemy: EnemyCombatant) {
-        // An earlier enemy's turn may have ended the fight, or thorns may
+        // An earlier enemy's turn may have ended the fight, or Brambles may
         // have killed this enemy before it could act.
         if (result != null || !enemy.alive) return
-        enemy.block = 0
-        val poison = enemy.statusAmount(StatusType.POISON)
-        if (poison > 0) {
-            enemy.loseHp(poison)
-            enemy.applyStatus(StatusType.POISON, -1)
-            log += "${enemy.def.name} suffers $poison poison damage."
-            if (!enemy.alive) return
-        }
+        enemy.ward = 0
+        tickVenom(enemy, enemy.def.name)
+        if (!enemy.alive) return
 
         when (val move = enemy.nextMove) {
             is EnemyMove.Attack -> repeat(move.times) {
                 if (player.alive) enemyAttack(enemy, move.damage)
             }
-            is EnemyMove.Defend -> {
-                enemy.block += move.block
-                log += "${enemy.def.name} braces for ${move.block} Block."
+            is EnemyMove.Guard -> {
+                enemy.ward += move.ward
+                log += "${enemy.def.name} guards for ${move.ward} Ward."
             }
-            is EnemyMove.AttackDefend -> {
+            is EnemyMove.AttackGuard -> {
                 enemyAttack(enemy, move.damage)
-                enemy.block += move.block
+                enemy.ward += move.ward
             }
             is EnemyMove.Buff -> {
                 enemy.applyStatus(move.status, move.amount)
                 log += "${enemy.def.name} uses ${move.label}."
             }
             is EnemyMove.Debuff -> {
-                player.applyStatus(move.status, move.amount)
-                log += "${enemy.def.name} afflicts you with ${move.amount} ${move.status.displayName}."
+                applyStatusChecked(player, move.status, move.amount)
+                log += "${enemy.def.name} afflicts you: ${move.amount} ${move.status.displayName}."
             }
             is EnemyMove.HealSelf -> {
                 enemy.heal(move.amount)
-                log += "${enemy.def.name} restores ${move.amount} HP."
+                log += "${enemy.def.name} mends ${move.amount} HP."
+            }
+            is EnemyMove.Steal -> {
+                enemyAttack(enemy, move.damage)
+                val stolen = minOf(run.gold, move.gold)
+                if (stolen > 0) {
+                    run.gold -= stolen
+                    log += "${enemy.def.name} pilfers $stolen gold!"
+                }
             }
         }
 
-        val ritual = enemy.statusAmount(StatusType.RITUAL)
-        if (ritual > 0) enemy.applyStatus(StatusType.STRENGTH, ritual)
-        val regen = enemy.statusAmount(StatusType.REGEN)
-        if (regen > 0) {
-            enemy.heal(regen)
-            enemy.applyStatus(StatusType.REGEN, -1)
+        val frenzy = enemy.statusAmount(StatusType.FRENZY)
+        if (frenzy > 0) enemy.applyStatus(StatusType.SPELLPOWER, frenzy)
+        val regrowth = enemy.statusAmount(StatusType.REGROWTH)
+        if (regrowth > 0) {
+            enemy.heal(regrowth)
+            enemy.applyStatus(StatusType.REGROWTH, -1)
         }
         enemy.decayStatusesAtTurnEnd()
         enemy.turnCounter++
-        chooseNextMove(enemy)
+        // The move chosen now executes after the next moon turn.
+        chooseNextMove(enemy, moon.next())
     }
 
-    private fun chooseNextMove(enemy: EnemyCombatant) {
-        enemy.nextMove = enemy.def.ai(enemy.turnCounter, rng, enemy)
+    private fun chooseNextMove(enemy: EnemyCombatant, phase: MoonPhase) {
+        enemy.nextMove = enemy.def.ai(enemy.turnCounter, rng, enemy, phase)
+    }
+
+    /** Venom hits at the start of the owner's turn, then halves (rounds down). */
+    private fun tickVenom(combatant: Combatant, name: String) {
+        val venom = combatant.statusAmount(StatusType.VENOM)
+        if (venom > 0) {
+            combatant.loseHp(venom)
+            combatant.statuses[StatusType.VENOM] = venom / 2
+            if (venom / 2 == 0) combatant.statuses.remove(StatusType.VENOM)
+            log += "Venom sears $name for $venom."
+        }
     }
 
     private fun enemyAttack(enemy: EnemyCombatant, base: Int) {
         val damage = attackDamage(enemy, player, base)
         val lost = player.takeDamage(damage)
         log += "${enemy.def.name} hits you for $damage."
-        if (lost > 0 || damage > 0) {
-            val thorns = player.statusAmount(StatusType.THORNS)
-            if (thorns > 0) {
-                enemy.takeDamage(thorns)
-                log += "Thorns strike back for $thorns."
+        if (damage > 0 || lost > 0) {
+            val brambles = player.statusAmount(StatusType.BRAMBLES)
+            if (brambles > 0) {
+                enemy.takeDamage(brambles)
+                log += "Brambles tear back for $brambles."
             }
         }
         checkCombatEnd()
     }
 
-    /** Strength, Weak (-25%) and Vulnerable (+50%) modifiers, floored, min 0. */
+    /**
+     * Flat damage pipeline: base + attacker Spellpower - attacker Chill
+     * + defender Hexed, floored at 0. Silver Crescent adds 2 to the
+     * player's hits under a Full Moon.
+     */
     fun attackDamage(attacker: Combatant, defender: Combatant, base: Int): Int {
-        var value = (base + attacker.statusAmount(StatusType.STRENGTH)).toDouble()
-        if (attacker.statusAmount(StatusType.WEAK) > 0) value *= 0.75
-        if (defender.statusAmount(StatusType.VULNERABLE) > 0) value *= 1.5
-        return max(0, value.toInt())
+        var value = base + attacker.statusAmount(StatusType.SPELLPOWER)
+        value -= attacker.statusAmount(StatusType.CHILL)
+        value += defender.statusAmount(StatusType.HEXED)
+        if (attacker === player && moon == MoonPhase.FULL && run.hasRelic("silver_crescent")) {
+            value += 2
+        }
+        return max(0, value)
     }
 
-    /** Dexterity and Frail (-25%) modifiers for block gain. */
-    fun blockGain(base: Int): Int {
-        var value = (base + player.statusAmount(StatusType.DEXTERITY)).toDouble()
-        if (player.statusAmount(StatusType.FRAIL) > 0) value *= 0.75
-        return max(0, value.toInt())
+    /** Ward gain: base + Bulwark. */
+    fun wardGain(base: Int): Int = max(0, base + player.statusAmount(StatusType.BULWARK))
+
+    /** Applies a status and detonates Doom if it crossed the threshold. */
+    fun applyStatusChecked(combatant: Combatant, status: StatusType, amount: Int) {
+        combatant.applyStatus(status, amount)
+        if (status == StatusType.DOOM) {
+            val doom = combatant.statusAmount(StatusType.DOOM)
+            if (doom >= DOOM_THRESHOLD) {
+                val burst = doom * DOOM_ERUPTION_MULTIPLIER
+                combatant.statuses.remove(StatusType.DOOM)
+                combatant.loseHp(burst)
+                val name = if (combatant === player) "you" else (combatant as EnemyCombatant).def.name
+                log += "DOOM erupts on $name for $burst!"
+            }
+        }
     }
 
     private fun resolveEffect(effect: CardEffect, target: EnemyCombatant?) {
         when (effect) {
             is CardEffect.Damage -> {
                 val enemy = target ?: return
+                val bonus = if (moon == MoonPhase.FULL) effect.fullMoonBonus else 0
                 repeat(effect.times) {
                     if (!enemy.alive) return@repeat
-                    val dmg = attackDamage(player, enemy, effect.amount)
+                    val dmg = attackDamage(player, enemy, effect.amount + bonus)
                     enemy.takeDamage(dmg)
-                    log += "You hit ${enemy.def.name} for $dmg."
+                    log += "You strike ${enemy.def.name} for $dmg."
                 }
             }
-            is CardEffect.DamageAll -> enemies.filter { it.alive }.forEach { enemy ->
-                val dmg = attackDamage(player, enemy, effect.amount)
-                enemy.takeDamage(dmg)
-                log += "You hit ${enemy.def.name} for $dmg."
+            is CardEffect.DamageAll -> {
+                val bonus = if (moon == MoonPhase.FULL) effect.fullMoonBonus else 0
+                enemies.filter { it.alive }.forEach { enemy ->
+                    val dmg = attackDamage(player, enemy, effect.amount + bonus)
+                    enemy.takeDamage(dmg)
+                    log += "You strike ${enemy.def.name} for $dmg."
+                }
             }
-            is CardEffect.GainBlock -> {
-                val gained = blockGain(effect.amount)
-                player.block += gained
-                log += "You gain $gained Block."
+            is CardEffect.GainWard -> {
+                val bonus = if (moon == MoonPhase.FULL) effect.fullMoonBonus else 0
+                val gained = wardGain(effect.amount + bonus)
+                player.ward += gained
+                log += "You gain $gained Ward."
             }
             is CardEffect.ApplyToTarget -> target?.takeIf { it.alive }
-                ?.applyStatus(effect.status, effect.amount)
+                ?.let { applyStatusChecked(it, effect.status, effect.amount) }
             is CardEffect.ApplyToAll -> enemies.filter { it.alive }
-                .forEach { it.applyStatus(effect.status, effect.amount) }
-            is CardEffect.ApplyToSelf -> player.applyStatus(effect.status, effect.amount)
-            is CardEffect.Draw -> draw(effect.count)
-            is CardEffect.GainEnergy -> energy += effect.amount
+                .forEach { applyStatusChecked(it, effect.status, effect.amount) }
+            is CardEffect.ApplyToSelf -> applyStatusChecked(player, effect.status, effect.amount)
+            is CardEffect.Draw -> {
+                val bonus = if (moon == MoonPhase.NEW) effect.newMoonBonus else 0
+                draw(effect.count + bonus)
+            }
+            is CardEffect.GainMana -> mana += effect.amount
             is CardEffect.Heal -> player.heal(effect.amount)
             is CardEffect.LoseHp -> {
                 player.loseHp(effect.amount)
                 checkCombatEnd()
+            }
+            is CardEffect.AdvanceMoon -> {
+                moon = moon.next()
+                log += "The moon turns: ${moon.displayName}."
             }
         }
     }
@@ -268,7 +326,12 @@ class CombatEngine(
     }
 
     private fun cleanupDeadEnemies() {
-        enemies.filter { !it.alive }.forEach { log += "${it.def.name} is slain!" }
+        val slain = enemies.filter { !it.alive }
+        slain.forEach { log += "${it.def.name} is slain!" }
+        if (slain.isNotEmpty() && run.hasRelic("bloodstone_ring")) {
+            player.heal(2 * slain.size)
+            log += "The Bloodstone Ring drinks deep: +${2 * slain.size} HP."
+        }
         enemies.removeAll { !it.alive }
     }
 
@@ -283,10 +346,11 @@ class CombatEngine(
         }
     }
 
-    /** The number an intent icon should show for an attacking enemy. */
+    /** The number an intent badge should show for an attacking enemy. */
     fun intentDamage(enemy: EnemyCombatant): Int? = when (val move = enemy.nextMove) {
         is EnemyMove.Attack -> attackDamage(enemy, player, move.damage)
-        is EnemyMove.AttackDefend -> attackDamage(enemy, player, move.damage)
+        is EnemyMove.AttackGuard -> attackDamage(enemy, player, move.damage)
+        is EnemyMove.Steal -> attackDamage(enemy, player, move.damage)
         else -> null
     }
 }

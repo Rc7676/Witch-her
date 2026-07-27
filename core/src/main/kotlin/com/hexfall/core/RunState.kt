@@ -3,7 +3,7 @@ package com.hexfall.core
 import kotlin.random.Random
 
 /**
- * One climb of the spire: the witch's HP, gold, deck, relics, and position
+ * One climb of the spire: the witch's HP, gold, deck, charms, and position
  * on the map. All randomness flows from [rng], seeded at run start.
  */
 class RunState(val seed: Long) {
@@ -24,10 +24,11 @@ class RunState(val seed: Long) {
     private var nextCardUid = 0
 
     init {
-        repeat(5) { addCard(CardLibrary.hexBolt) }
-        repeat(4) { addCard(CardLibrary.ward) }
-        addCard(CardLibrary.eldritchBlast)
-        relics += RelicLibrary.witchwoodCharm
+        repeat(4) { addCard(CardLibrary.moonbolt) }
+        repeat(4) { addCard(CardLibrary.veil) }
+        addCard(CardLibrary.bloodprick)
+        addCard(CardLibrary.lunarTide)
+        relics += RelicLibrary.moonwellVial
     }
 
     fun addCard(def: CardDef): CardInstance =
@@ -48,36 +49,26 @@ class RunState(val seed: Long) {
     fun addRelic(relic: RelicDef) {
         if (hasRelic(relic.id)) return
         relics += relic
-        when (relic.id) {
-            "heart_amulet" -> {
-                maxHp += 12
-                hp += 12
-            }
-            "raven_feather" -> {
-                maxHp += 10
-                hp += 10
-            }
+        if (relic.id == "giants_tooth") {
+            maxHp += 10
+            hp += 10
         }
     }
 
-    /** Post-combat healing and gold from relics. */
+    /** Post-combat healing and gold from charms. */
     fun afterCombatRelics(log: MutableList<String>) {
-        if (hasRelic("witchwood_charm")) {
-            hp = (hp + 3).coerceAtMost(maxHp)
-            log += "Witchwood Charm heals 3 HP."
-        }
-        if (hasRelic("cauldron")) {
-            hp = (hp + 8).coerceAtMost(maxHp)
-            log += "Traveling Cauldron heals 8 HP."
-        }
-        if (hasRelic("bone_dice")) {
-            gold += 15
-            log += "Bone Dice rattle: +15 gold."
+        if (hasRelic("moonwell_vial")) {
+            hp = (hp + 4).coerceAtMost(maxHp)
+            log += "The Moonwell Vial restores 4 HP."
         }
     }
 
     fun goldReward(base: Int): Int =
-        if (hasRelic("lucky_coin")) (base * 1.3).toInt() else base
+        if (hasRelic("magpies_eye")) (base * 1.3).toInt() else base
+
+    /** Shop price after charm discounts. */
+    fun shopPrice(base: Int): Int =
+        if (hasRelic("merchants_skull")) (base * 4) / 5 else base
 
     fun moveTo(node: MapNode) {
         currentNodeId = node.id

@@ -24,6 +24,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -33,31 +35,44 @@ import androidx.compose.ui.window.Dialog
 import com.hexfall.core.CardDef
 import com.hexfall.core.CardInstance
 import com.hexfall.core.CardType
+import com.hexfall.core.Rarity
 import com.hexfall.core.StatusType
 
 fun cardColor(type: CardType): Color = when (type) {
-    CardType.ATTACK -> HexfallColors.attackRed
-    CardType.SKILL -> HexfallColors.skillBlue
-    CardType.POWER -> HexfallColors.powerViolet
-    CardType.CURSE -> HexfallColors.curseGrey
+    CardType.SPELL_ATTACK -> Color(0xFFC4574A)
+    CardType.SPELL_WARD -> Color(0xFF4A7EC4)
+    CardType.RITE -> Color(0xFF9B5FD0)
+    CardType.CURSE -> Color(0xFF4A4A55)
+}
+
+fun rarityBorder(def: CardDef): Color = when {
+    def.upgraded -> HexfallColors.gold
+    def.rarity == Rarity.RARE -> Color(0xFFE0B85C)
+    def.rarity == Rarity.UNCOMMON -> Color(0xFF6FC9B8)
+    def.rarity == Rarity.CURSE -> Color(0xFF3A3A44)
+    else -> Color(0xFF6C6486)
 }
 
 fun statusIcon(type: StatusType): String = when (type) {
-    StatusType.STRENGTH -> "💪"
-    StatusType.DEXTERITY -> "🐾"
-    StatusType.WEAK -> "💧"
-    StatusType.VULNERABLE -> "🎯"
-    StatusType.FRAIL -> "🥀"
-    StatusType.POISON -> "☠"
-    StatusType.REGEN -> "✚"
-    StatusType.THORNS -> "🌵"
-    StatusType.RITUAL -> "🕯"
-    StatusType.ENERGIZE -> "⚡"
-    StatusType.DECAY -> "🩸"
-    StatusType.IMMOLATE -> "🔥"
+    StatusType.SPELLPOWER -> "☀"
+    StatusType.BULWARK -> "🛡"
+    StatusType.HEXED -> "🕸"
+    StatusType.CHILL -> "❄"
+    StatusType.VENOM -> "🐍"
+    StatusType.DOOM -> "💀"
+    StatusType.REGROWTH -> "🌿"
+    StatusType.BRAMBLES -> "🌵"
+    StatusType.FRENZY -> "💢"
+    StatusType.ATTUNED -> "🔮"
+    StatusType.OMEN -> "🐦"
+    StatusType.BLOOD_DEBT -> "🩸"
+    StatusType.EMBERHEART -> "🔥"
 }
 
-/** A hand/deck card. [enabled] dims unplayable cards; [selected] adds a glow. */
+/**
+ * A hand/deck card: sigil art panel, cost gem, name banner, rules text.
+ * [enabled] dims unplayable cards; [selected] adds a gold glow.
+ */
 @Composable
 fun CardView(
     def: CardDef,
@@ -66,65 +81,73 @@ fun CardView(
     selected: Boolean = false,
     onClick: (() -> Unit)? = null,
 ) {
-    val borderColor = when {
-        selected -> HexfallColors.gold
-        enabled -> cardColor(def.type)
-        else -> HexfallColors.curseGrey
-    }
+    val borderColor = if (selected) HexfallColors.gold else rarityBorder(def)
     var m = modifier
-        .width(104.dp)
-        .height(150.dp)
-        .border(if (selected) 3.dp else 1.5.dp, borderColor, RoundedCornerShape(10.dp))
+        .width(108.dp)
+        .height(160.dp)
+        .border(if (selected) 3.dp else 1.5.dp, borderColor, RoundedCornerShape(12.dp))
+        .clip(RoundedCornerShape(12.dp))
         .background(
-            if (enabled) HexfallColors.surfaceLight else HexfallColors.surface,
-            RoundedCornerShape(10.dp),
+            Brush.verticalGradient(
+                listOf(Color(0xFF261C40), Color(0xFF17102A)),
+            ),
         )
     if (onClick != null) m = m.clickable { onClick() }
 
-    Column(m.padding(6.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+    Column(m) {
+        Box {
+            SigilArt(
+                seed = def.id.hashCode(),
+                tint = if (enabled) cardColor(def.type) else Color(0xFF55506A),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+            )
             if (def.playable) {
                 Box(
                     Modifier
-                        .size(22.dp)
-                        .background(HexfallColors.energyAmber, CircleShape),
+                        .padding(4.dp)
+                        .size(24.dp)
+                        .background(
+                            Brush.radialGradient(
+                                listOf(Color(0xFFFFE29A), HexfallColors.energyAmber),
+                            ),
+                            CircleShape,
+                        )
+                        .border(1.dp, Color(0xFF7A5A1E), CircleShape),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
                         "${def.cost}",
-                        color = Color.Black,
+                        color = Color(0xFF3A2A08),
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
                     )
                 }
-                Spacer(Modifier.width(4.dp))
             }
-            Text(
-                def.name,
-                color = if (def.upgraded) HexfallColors.gold else HexfallColors.parchment,
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
-                lineHeight = 12.sp,
-            )
         }
-        Spacer(Modifier.height(4.dp))
-        Box(
-            Modifier
+        Text(
+            def.name,
+            color = if (def.upgraded) HexfallColors.gold else HexfallColors.parchment,
+            fontSize = 11.sp,
+            fontWeight = FontWeight.Bold,
+            lineHeight = 12.sp,
+            maxLines = 1,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
                 .fillMaxWidth()
-                .height(14.dp)
-                .background(cardColor(def.type).copy(alpha = 0.35f), RoundedCornerShape(4.dp)),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(def.type.name, fontSize = 8.sp, color = HexfallColors.parchment)
-        }
-        Spacer(Modifier.height(5.dp))
+                .background(cardColor(def.type).copy(alpha = if (enabled) 0.45f else 0.2f))
+                .padding(vertical = 3.dp, horizontal = 2.dp),
+        )
         Text(
             def.description,
-            color = HexfallColors.parchment.copy(alpha = 0.9f),
-            fontSize = 10.sp,
-            lineHeight = 13.sp,
+            color = HexfallColors.parchment.copy(alpha = if (enabled) 0.92f else 0.5f),
+            fontSize = 9.5.sp,
+            lineHeight = 12.sp,
             textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 5.dp, vertical = 4.dp),
         )
     }
 }
@@ -135,14 +158,17 @@ fun StatBar(current: Int, max: Int, color: Color, modifier: Modifier = Modifier)
     Box(
         modifier
             .height(14.dp)
-            .background(Color.Black.copy(alpha = 0.5f), RoundedCornerShape(7.dp)),
+            .background(Color.Black.copy(alpha = 0.55f), RoundedCornerShape(7.dp)),
     ) {
         val fraction = if (max <= 0) 0f else (current.toFloat() / max).coerceIn(0f, 1f)
         Box(
             Modifier
                 .fillMaxHeight()
                 .fillMaxWidth(fraction)
-                .background(color, RoundedCornerShape(7.dp)),
+                .background(
+                    Brush.horizontalGradient(listOf(color.copy(alpha = 0.75f), color)),
+                    RoundedCornerShape(7.dp),
+                ),
         )
         Text(
             "$current/$max",
@@ -150,6 +176,19 @@ fun StatBar(current: Int, max: Int, color: Color, modifier: Modifier = Modifier)
             fontSize = 9.sp,
             modifier = Modifier.align(Alignment.Center),
         )
+    }
+}
+
+/** Translucent panel used over the night sky. */
+@Composable
+fun ScenePanel(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    Box(
+        modifier
+            .clip(RoundedCornerShape(12.dp))
+            .background(Color(0xCC17102A))
+            .border(1.dp, Color(0x336C57A8), RoundedCornerShape(12.dp)),
+    ) {
+        content()
     }
 }
 

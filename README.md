@@ -1,23 +1,30 @@
 # 🜏 Hexfall
 
-A fantasy **deck-building roguelike for Android**, in the spirit of
-*Slay the Spire* and *Roguebook*. You are a witch climbing a cursed spire:
-fight monsters with a deck of spells, collect cards and relics, brave events,
-shops and campfires — and face the Pale Lich at the top. Death is permanent;
-every run generates a fresh map.
+A fantasy **deck-building roguelike for Android** with its own engine
+identity: **the turning moon**. You are a witch climbing a cursed spire.
+Every combat turn the moon moves through New → Waxing → Full → Waning —
+your spells surge under the right phase, werewolves rage at the Full Moon,
+and moths hunt in the dark of the New. Face the Hollow Queen at the top.
+Death is permanent; every run generates a fresh map.
 
 ## Gameplay
 
-- **Turn-based card combat** — 3 energy per turn, draw 5, attack/skill/power
-  cards, enemy intents shown ahead of time.
-- **Statuses** — Strength, Dexterity, Weak, Vulnerable, Frail, Poison, Regen,
-  Thorns, and more.
-- **30+ cards** across 4 rarities, each with an upgraded version.
-- **14 relics** with passive run-changing effects.
+- **The turning moon** — a global phase wheel drives cards and monsters;
+  some spells turn it forward on demand.
+- **Flat-math afflictions** — Hexed (+damage taken per hit), Chill
+  (−damage dealt per hit), Venom (hits hard, then halves), and **Doom**,
+  which detonates for 3× stacks when it reaches 6.
+- **Blood magic** — spells like Bloodprick and Crimson Pact pay in HP
+  instead of Mana.
+- **30 spells** across 4 rarities, each with an upgraded version.
+- **15 charms** with run-changing effects (Serpent Fang, Doomkeeper's Bell,
+  Wolfpelt Cloak...).
+- **A living bestiary** — gold-stealing Grave Robbers, moon-sensitive
+  wolves and moths, the alchemist elite who drinks himself back to health.
 - **Procedural act map** — a branching 16-floor DAG with monster, elite,
   event, shop, campfire, treasure and boss nodes.
-- **Events, shops, campfires** — heal or upgrade at fires, buy cards/relics
-  and remove cards at shops, gamble at story events.
+- **All art drawn in code** — painted night skies, a phase-accurate moon,
+  silhouette monsters with glowing eyes, generative card sigils.
 
 ## Project structure
 

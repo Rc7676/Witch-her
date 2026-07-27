@@ -3,78 +3,82 @@ package com.hexfall.core
 import kotlin.random.Random
 
 /**
- * All relics. Their behavior lives in [CombatEngine] and [RunState] hooks,
- * keyed by relic id.
+ * All charms (relics). Their behavior lives in [CombatEngine] and
+ * [RunState] hooks, keyed by charm id.
  */
 object RelicLibrary {
 
-    val witchwoodCharm = RelicDef(
-        "witchwood_charm", "Witchwood Charm",
-        "Heal 3 HP after each combat.", 0,
+    val moonwellVial = RelicDef(
+        "moonwell_vial", "Moonwell Vial",
+        "Heal 4 HP after each combat.", 0,
     )
-    val bloodVial = RelicDef(
-        "blood_vial", "Blood Vial",
-        "Heal 2 HP at the start of each combat.", 90,
+    val serpentFang = RelicDef(
+        "serpent_fang", "Serpent Fang",
+        "Combats begin with 3 Venom on a random enemy.", 110,
     )
-    val ironTalisman = RelicDef(
-        "iron_talisman", "Iron Talisman",
-        "Start each combat with 6 Block.", 120,
+    val doomkeepersBell = RelicDef(
+        "doomkeepers_bell", "Doomkeeper's Bell",
+        "Enemies enter combat with 2 Doom.", 130,
     )
-    val witchHat = RelicDef(
-        "witch_hat", "Pointed Hat",
+    val wolfpeltCloak = RelicDef(
+        "wolfpelt_cloak", "Wolfpelt Cloak",
+        "Gain 1 extra Mana on Full Moon turns.", 150,
+    )
+    val obsidianFigurine = RelicDef(
+        "obsidian_figurine", "Obsidian Figurine",
+        "Start each combat with 8 Ward.", 120,
+    )
+    val scryersOrb = RelicDef(
+        "scryers_orb", "Scryer's Orb",
         "Draw 2 additional cards on your first turn of combat.", 110,
     )
-    val whetstone = RelicDef(
-        "whetstone", "Cursed Whetstone",
-        "Start each combat with 2 Strength.", 150,
+    val bloodstoneRing = RelicDef(
+        "bloodstone_ring", "Bloodstone Ring",
+        "Heal 2 HP whenever an enemy is slain.", 140,
     )
-    val moonCharm = RelicDef(
-        "moon_charm", "Moonstone Charm",
-        "Start each combat with 2 Dexterity.", 150,
+    val hexwroughtIdol = RelicDef(
+        "hexwrought_idol", "Hexwrought Idol",
+        "Enemies enter combat with 3 Hexed.", 130,
     )
-    val thornCrown = RelicDef(
-        "thorn_crown", "Crown of Thorns",
-        "Start each combat with 3 Thorns.", 130,
+    val silverCrescent = RelicDef(
+        "silver_crescent", "Silver Crescent",
+        "Your hits deal 2 more damage on Full Moon turns.", 150,
     )
-    val luckyCoin = RelicDef(
-        "lucky_coin", "Lucky Coin",
-        "Gain 30% more gold from combat.", 100,
+    val merchantsSkull = RelicDef(
+        "merchants_skull", "Merchant's Skull",
+        "Everything in shops costs 20% less.", 100,
     )
-    val heartAmulet = RelicDef(
-        "heart_amulet", "Heartwood Amulet",
-        "Gain 12 Max HP when picked up.", 140,
-    )
-    val serpentEye = RelicDef(
-        "serpent_eye", "Serpent's Eye",
-        "Draw 6 cards each turn instead of 5.", 170,
-    )
-    val emberStone = RelicDef(
-        "ember_stone", "Ember Stone",
-        "Gain 1 additional Energy at the start of each turn.", 220,
-    )
-    val cauldron = RelicDef(
-        "cauldron", "Traveling Cauldron",
-        "Heal 8 HP after each combat.", 160,
-    )
-    val ravenFeather = RelicDef(
-        "raven_feather", "Raven Feather",
+    val giantsTooth = RelicDef(
+        "giants_tooth", "Giant's Tooth",
         "Gain 10 Max HP when picked up.", 100,
     )
-    val boneDice = RelicDef(
-        "bone_dice", "Bone Dice",
-        "Gain 15 gold after each combat.", 110,
+    val ashenHourglass = RelicDef(
+        "ashen_hourglass", "Ashen Hourglass",
+        "Gain 1 additional Mana at the start of each turn.", 220,
+    )
+    val thornGirdle = RelicDef(
+        "thorn_girdle", "Thorn Girdle",
+        "Start each combat with 3 Brambles.", 130,
+    )
+    val magpiesEye = RelicDef(
+        "magpies_eye", "Magpie's Eye",
+        "Gain 30% more gold from combat.", 100,
+    )
+    val owlQuill = RelicDef(
+        "owl_quill", "Owl Feather Quill",
+        "Draw 6 cards each turn instead of 5.", 170,
     )
 
     val all: List<RelicDef> = listOf(
-        bloodVial, ironTalisman, witchHat, whetstone, moonCharm, thornCrown,
-        luckyCoin, heartAmulet, serpentEye, emberStone, cauldron, ravenFeather,
-        boneDice,
+        serpentFang, doomkeepersBell, wolfpeltCloak, obsidianFigurine, scryersOrb,
+        bloodstoneRing, hexwroughtIdol, silverCrescent, merchantsSkull, giantsTooth,
+        ashenHourglass, thornGirdle, magpiesEye, owlQuill,
     )
 
     fun byId(id: String): RelicDef =
-        (all + witchwoodCharm).first { it.id == id }
+        (all + moonwellVial).first { it.id == id }
 
-    /** A random relic the run doesn't already own; null if all are owned. */
+    /** A random charm the run doesn't already own; null if all are owned. */
     fun randomNew(rng: Random, owned: Collection<RelicDef>): RelicDef? {
         val pool = all.filterNot { it in owned }
         return if (pool.isEmpty()) null else pool[rng.nextInt(pool.size)]

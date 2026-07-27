@@ -9,46 +9,55 @@ import kotlin.test.assertTrue
 class RunStateTest {
 
     @Test
-    fun `starter deck is ten cards with the witchwood charm`() {
+    fun `starter deck is ten cards with the moonwell vial`() {
         val run = RunState(1L)
         assertEquals(10, run.deck.size)
-        assertEquals(5, run.deck.count { it.def.id == "hex_bolt" })
-        assertEquals(4, run.deck.count { it.def.id == "ward" })
-        assertEquals(1, run.deck.count { it.def.id == "eldritch_blast" })
-        assertTrue(run.hasRelic("witchwood_charm"))
+        assertEquals(4, run.deck.count { it.def.id == "moonbolt" })
+        assertEquals(4, run.deck.count { it.def.id == "veil" })
+        assertEquals(1, run.deck.count { it.def.id == "bloodprick" })
+        assertEquals(1, run.deck.count { it.def.id == "lunar_tide" })
+        assertTrue(run.hasRelic("moonwell_vial"))
     }
 
     @Test
     fun `upgrading a card swaps in the upgraded def once`() {
         val run = RunState(1L)
-        val bolt = run.deck.first { it.def.id == "hex_bolt" }
+        val bolt = run.deck.first { it.def.id == "moonbolt" }
         assertTrue(run.upgradeCard(bolt))
-        assertEquals("hex_bolt+", bolt.def.id)
+        assertEquals("moonbolt+", bolt.def.id)
         assertFalse(run.upgradeCard(bolt))
     }
 
     @Test
-    fun `heart amulet grants max hp on pickup`() {
+    fun `giants tooth grants max hp on pickup`() {
         val run = RunState(1L)
-        run.addRelic(RelicLibrary.heartAmulet)
-        assertEquals(82, run.maxHp)
-        assertEquals(82, run.hp)
+        run.addRelic(RelicLibrary.giantsTooth)
+        assertEquals(80, run.maxHp)
+        assertEquals(80, run.hp)
     }
 
     @Test
     fun `duplicate relics are not added`() {
         val run = RunState(1L)
-        run.addRelic(RelicLibrary.luckyCoin)
-        run.addRelic(RelicLibrary.luckyCoin)
-        assertEquals(1, run.relics.count { it.id == "lucky_coin" })
+        run.addRelic(RelicLibrary.magpiesEye)
+        run.addRelic(RelicLibrary.magpiesEye)
+        assertEquals(1, run.relics.count { it.id == "magpies_eye" })
     }
 
     @Test
-    fun `lucky coin boosts gold rewards`() {
+    fun `magpies eye boosts gold rewards`() {
         val run = RunState(1L)
         assertEquals(20, run.goldReward(20))
-        run.addRelic(RelicLibrary.luckyCoin)
+        run.addRelic(RelicLibrary.magpiesEye)
         assertEquals(26, run.goldReward(20))
+    }
+
+    @Test
+    fun `merchants skull discounts shop prices`() {
+        val run = RunState(2L)
+        assertEquals(100, run.shopPrice(100))
+        run.addRelic(RelicLibrary.merchantsSkull)
+        assertEquals(80, run.shopPrice(100))
     }
 
     @Test

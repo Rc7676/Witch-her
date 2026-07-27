@@ -30,9 +30,9 @@ object EventLibrary {
                 run.hp = (run.hp + 15).coerceAtMost(run.maxHp)
                 "Warmth spreads through you. You heal 15 HP."
             },
-            EventChoice("Desecrate (gain 50 gold, gain a Burden curse)") { run, _ ->
+            EventChoice("Desecrate (gain 50 gold, gain a Grave Dust curse)") { run, _ ->
                 run.gold += 50
-                run.addCard(CardLibrary.burden)
+                run.addCard(CardLibrary.graveDust)
                 "You pry the silver loose. Something cold settles into your deck..."
             },
             EventChoice("Leave") { _, _ -> "You move on, uneasy." },
@@ -88,11 +88,11 @@ object EventLibrary {
         "A grimoire bound in pale leather lies open on a lectern, its pages " +
             "turning by themselves.",
         listOf(
-            EventChoice("Read it (gain a random Rare card and a Burden curse)") { run, rng ->
+            EventChoice("Read it (gain a random Rare card and a Grave Dust curse)") { run, rng ->
                 val rares = CardLibrary.rewardPool.filter { it.rarity == Rarity.RARE }
                 val card = rares[rng.nextInt(rares.size)]
                 run.addCard(card)
-                run.addCard(CardLibrary.burden)
+                run.addCard(CardLibrary.graveDust)
                 "Forbidden knowledge floods your mind. You learn ${card.name} — and carry its price."
             },
             EventChoice("Burn it (gain 25 gold)") { run, _ ->
