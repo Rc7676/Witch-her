@@ -9,9 +9,14 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.hexfall.game.GameScreen
 import com.hexfall.game.GameViewModel
+import com.hexfall.game.GameViewModelFactory
+import com.hexfall.game.RunStore
 
 @Composable
-fun HexfallApp(vm: GameViewModel = viewModel()) {
+fun HexfallApp(
+    store: RunStore? = null,
+    vm: GameViewModel = viewModel(factory = GameViewModelFactory(store)),
+) {
     HexfallTheme {
         Surface(
             modifier = Modifier.fillMaxSize(),

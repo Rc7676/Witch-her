@@ -23,6 +23,9 @@ Death is permanent; every run generates a fresh map.
   wolves and moths, the alchemist elite who drinks himself back to health.
 - **Procedural act map** — a branching 16-floor DAG with monster, elite,
   event, shop, campfire, treasure and boss nodes.
+- **Runs survive the app closing** — the climb is snapshotted on the map, so
+  a phone call or an Android process kill costs nothing. Death still wipes
+  the save; this is a roguelike.
 - **All art drawn in code** — painted night skies, a phase-accurate moon,
   silhouette monsters with glowing eyes, generative card sigils.
 

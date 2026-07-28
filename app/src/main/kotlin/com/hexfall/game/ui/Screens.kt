@@ -7,6 +7,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -94,10 +95,27 @@ fun TitleScreen(vm: GameViewModel) {
                 color = Art.moonGlow.copy(alpha = 0.85f),
             )
             Spacer(Modifier.weight(1f))
-            ArcaneButton(text = "Begin the Climb", onClick = { vm.newRun() })
+            if (vm.hasSavedRun) {
+                ArcaneButton(text = "Continue Climb", onClick = { vm.continueRun() })
+                Spacer(Modifier.height(10.dp))
+                Text(
+                    "Begin the Climb",
+                    fontSize = 13.sp,
+                    color = HexfallColors.parchment.copy(alpha = 0.75f),
+                    modifier = Modifier
+                        .clickable { vm.newRun() }
+                        .padding(8.dp),
+                )
+            } else {
+                ArcaneButton(text = "Begin the Climb", onClick = { vm.newRun() })
+            }
             Spacer(Modifier.height(16.dp))
             Text(
-                "Bind spells to your grimoire. Watch the moon.\nDeath is permanent.",
+                if (vm.hasSavedRun) {
+                    "A climb waits unfinished.\nStarting anew abandons it."
+                } else {
+                    "Bind spells to your grimoire. Watch the moon.\nDeath is permanent."
+                },
                 fontSize = 12.sp,
                 textAlign = TextAlign.Center,
                 color = HexfallColors.parchment.copy(alpha = 0.6f),

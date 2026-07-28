@@ -92,20 +92,24 @@ fun CombatScreen(vm: GameViewModel) {
 
     val draggingTargeted = dragCard?.def?.needsTarget == true
     val draggingSelf = dragCard != null && dragCard?.def?.needsTarget == false
+    // One slack value for both the highlight and the drop test, so a card
+    // always lands on the enemy the glow says it will.
+    val targetSlack = with(density) { 16.dp.toPx() }
     val hoveredEnemy: Int? = if (draggingTargeted) {
-        enemyBounds.entries.firstOrNull { it.value.inflate(24f).contains(dragPos) }?.key
+        enemyBounds.entries
+            .firstOrNull { it.value.inflate(targetSlack).contains(dragPos) }?.key
     } else null
     val hoveringSelf = draggingSelf && battlefieldBounds.contains(dragPos)
 
     fun finishDrag() {
         val card = dragCard
+        val target = hoveredEnemy
+        val onSelf = hoveringSelf
         dragCard = null
         if (card == null || !engine.canPlay(card)) return
         if (card.def.needsTarget) {
-            val index = enemyBounds.entries
-                .firstOrNull { it.value.inflate(40f).contains(dragPos) }?.key
-            if (index != null) vm.playCard(card, index)
-        } else if (battlefieldBounds.contains(dragPos)) {
+            if (target != null) vm.playCard(card, target)
+        } else if (onSelf) {
             vm.playCard(card, null)
         }
     }

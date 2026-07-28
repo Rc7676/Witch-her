@@ -150,8 +150,10 @@ class CombatEngine(
 
     private fun takeEnemyTurn(enemy: EnemyCombatant) {
         // An earlier enemy's turn may have ended the fight, or Brambles may
-        // have killed this enemy before it could act.
-        if (result != null || !enemy.alive) return
+        // have killed this enemy before it could act. Checking the player
+        // directly also covers deaths that bypass checkCombatEnd (an erupting
+        // Doom applied by a Debuff move).
+        if (result != null || !enemy.alive || !player.alive) return
         enemy.ward = 0
         tickVenom(enemy, enemy.def.name)
         if (!enemy.alive) return
@@ -175,6 +177,7 @@ class CombatEngine(
             is EnemyMove.Debuff -> {
                 applyStatusChecked(player, move.status, move.amount)
                 log += "${enemy.def.name} afflicts you: ${move.amount} ${move.status.displayName}."
+                checkCombatEnd()
             }
             is EnemyMove.HealSelf -> {
                 enemy.heal(move.amount)

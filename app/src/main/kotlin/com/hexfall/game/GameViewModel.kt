@@ -17,6 +17,7 @@ import com.hexfall.core.MapNode
 import com.hexfall.core.NodeType
 import com.hexfall.core.RelicDef
 import com.hexfall.core.RelicLibrary
+import com.hexfall.core.RunSnapshot
 import com.hexfall.core.RunState
 import com.hexfall.core.ShopInventory
 import kotlin.random.Random
@@ -37,9 +38,13 @@ sealed interface GameScreen {
  * Holds the current run and routes between screens. The core engine is
  * mutable, so every action bumps [version]; the UI keys recomposition on it.
  */
-class GameViewModel : ViewModel() {
+class GameViewModel(private val store: RunStore? = null) : ViewModel() {
 
     var screen by mutableStateOf<GameScreen>(GameScreen.Title)
+        private set
+
+    /** True when a climb from a previous session can be resumed. */
+    var hasSavedRun by mutableStateOf(store?.exists() == true)
         private set
     var version by mutableIntStateOf(0)
         private set
@@ -69,12 +74,34 @@ class GameViewModel : ViewModel() {
         run = RunState(Random.nextLong())
         combat = null
         screen = GameScreen.Map
+        persist()
+        bump()
+    }
+
+    /**
+     * Resumes the stored climb. Snapshots are taken on the map, so the witch
+     * returns to the room she was choosing from — never mid-combat.
+     */
+    fun continueRun() {
+        val text = store?.load()
+        val restored = text?.let { RunSnapshot.decode(it) }
+        if (restored == null) {
+            // Unreadable or written by an incompatible version.
+            store?.clear()
+            hasSavedRun = false
+            bump()
+            return
+        }
+        run = restored
+        combat = null
+        screen = GameScreen.Map
         bump()
     }
 
     fun abandonRun() {
         run = null
         combat = null
+        discardSave()
         screen = GameScreen.Title
         bump()
     }
@@ -82,7 +109,21 @@ class GameViewModel : ViewModel() {
     fun backToMap() {
         eventOutcome = null
         screen = GameScreen.Map
+        persist()
         bump()
+    }
+
+    /** Writes the current run to disk; called whenever the witch is on the map. */
+    private fun persist() {
+        val r = run ?: return
+        val s = store ?: return
+        s.save(RunSnapshot.encode(r))
+        hasSavedRun = true
+    }
+
+    private fun discardSave() {
+        store?.clear()
+        hasSavedRun = false
     }
 
     // --- Map -------------------------------------------------------------
@@ -144,12 +185,15 @@ class GameViewModel : ViewModel() {
         when (engine.result) {
             CombatResult.DEFEAT -> {
                 combat = null
+                // The climb is over: the save must not outlive it.
+                discardSave()
                 screen = GameScreen.GameOver(victory = false, floors = r.floorsClimbed)
             }
             CombatResult.VICTORY -> {
                 r.afterCombatRelics(engine.log)
                 combat = null
                 if (combatBoss) {
+                    discardSave()
                     screen = GameScreen.GameOver(victory = true, floors = r.floorsClimbed)
                 } else {
                     val reward = CombatReward.forCombat(r, r.rng, combatElite)

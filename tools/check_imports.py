@@ -24,6 +24,9 @@ BUILTINS = {
     "String", "StringBuilder", "System", "Throwable", "Triple", "Unit",
     "ArrayList", "HashMap", "HashSet", "Regex", "Sequence", "Thread",
     "IndexOutOfBoundsException", "NullPointerException", "Error",
+    # Annotations Kotlin imports by default.
+    "Suppress", "Deprecated", "Throws", "JvmStatic", "JvmField", "JvmOverloads",
+    "OptIn", "Volatile", "Synchronized", "Transient", "SafeVarargs",
 }
 
 DECL_RE = re.compile(

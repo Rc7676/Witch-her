@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.hexfall.game.ui.HexfallApp
+import java.io.File
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -12,8 +13,9 @@ class MainActivity : ComponentActivity() {
         // content with safeDrawingPadding so nothing hides under the nav bar.
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        val store = RunStore(File(filesDir, "hexfall_run.txt"))
         setContent {
-            HexfallApp()
+            HexfallApp(store)
         }
     }
 }
