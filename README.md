@@ -53,6 +53,10 @@ The rules engine is plain Kotlin and can be built and tested on any JVM:
 ./gradlew -Phexfall.coreOnly=true :core:test
 ```
 
+Where the Android SDK is unavailable, `tools/check_imports.py` statically
+scans the UI sources for unresolved references (missing imports) in a couple
+of seconds. CI runs it before the APK build.
+
 ## Roadmap ideas
 
 - Save/continue runs (serialize `RunState`)

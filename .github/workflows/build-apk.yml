@@ -19,6 +19,10 @@ jobs:
           distribution: temurin
           java-version: "17"
 
+      # Seconds, and catches missing imports before the ~2 minute Android build.
+      - name: Check for unresolved references
+        run: python3 tools/check_imports.py
+
       - name: Run game-logic tests
         run: ./gradlew --no-daemon -Phexfall.coreOnly=true :core:test
 
