@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -76,6 +77,7 @@ fun TitleScreen(vm: GameViewModel) {
         Column(
             Modifier
                 .fillMaxSize()
+                .safeDrawingPadding()
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -92,12 +94,7 @@ fun TitleScreen(vm: GameViewModel) {
                 color = Art.moonGlow.copy(alpha = 0.85f),
             )
             Spacer(Modifier.weight(1f))
-            Button(
-                onClick = { vm.newRun() },
-                colors = ButtonDefaults.buttonColors(containerColor = HexfallColors.purple),
-            ) {
-                Text("Begin the Climb", fontSize = 18.sp, modifier = Modifier.padding(6.dp))
-            }
+            ArcaneButton(text = "Begin the Climb", onClick = { vm.newRun() })
             Spacer(Modifier.height(16.dp))
             Text(
                 "Bind spells to your grimoire. Watch the moon.\nDeath is permanent.",

@@ -3,6 +3,7 @@ package com.hexfall.game.ui
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
@@ -56,6 +57,14 @@ fun DrawScope.drawNightSky(starSeed: Int = 7) {
         color = Art.mist,
         topLeft = Offset(-size.width * 0.2f, size.height * 0.82f),
         size = Size(size.width * 1.4f, size.height * 0.3f),
+    )
+    // Vignette: darkened edges pull focus to the center.
+    drawRect(
+        brush = Brush.radialGradient(
+            colors = listOf(Color.Transparent, Color.Transparent, Color(0x59000000)),
+            center = Offset(size.width / 2f, size.height / 2f),
+            radius = size.maxDimension * 0.75f,
+        ),
     )
 }
 
@@ -437,7 +446,11 @@ fun SigilArt(seed: Int, tint: Color, modifier: Modifier = Modifier) {
 
 // --- Scene scaffold ------------------------------------------------------
 
-/** Full-screen night backdrop; most screens sit on top of this. */
+/**
+ * Full-screen night backdrop; most screens sit on top of this. The sky
+ * paints edge-to-edge behind the system bars while [content] is inset
+ * inside the safe-drawing area so nav buttons never overlap the UI.
+ */
 @Composable
 fun NightScene(
     moon: MoonPhase? = null,
@@ -454,7 +467,13 @@ fun NightScene(
             }
             if (spire) drawSpire(alpha = 0.85f)
         }
-        content()
+        Box(
+            Modifier
+                .fillMaxSize()
+                .safeDrawingPadding(),
+        ) {
+            content()
+        }
     }
 }
 

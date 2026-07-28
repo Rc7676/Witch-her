@@ -179,6 +179,46 @@ fun StatBar(current: Int, max: Int, color: Color, modifier: Modifier = Modifier)
     }
 }
 
+/** Primary action button: gradient, gold border, arcane feel. */
+@Composable
+fun ArcaneButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
+    Box(
+        modifier
+            .clip(RoundedCornerShape(24.dp))
+            .background(
+                if (enabled) {
+                    Brush.horizontalGradient(
+                        listOf(Color(0xFF6B3FA8), Color(0xFF9B6DFF), Color(0xFF6B3FA8)),
+                    )
+                } else {
+                    Brush.horizontalGradient(
+                        listOf(Color(0xFF3A3348), Color(0xFF3A3348)),
+                    )
+                },
+            )
+            .border(
+                1.dp,
+                if (enabled) HexfallColors.gold.copy(alpha = 0.6f) else Color(0x33FFFFFF),
+                RoundedCornerShape(24.dp),
+            )
+            .clickable(enabled = enabled) { onClick() }
+            .padding(horizontal = 20.dp, vertical = 10.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text,
+            color = if (enabled) Color.White else Color(0x88FFFFFF),
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+        )
+    }
+}
+
 /** Translucent panel used over the night sky. */
 @Composable
 fun ScenePanel(modifier: Modifier = Modifier, content: @Composable () -> Unit) {

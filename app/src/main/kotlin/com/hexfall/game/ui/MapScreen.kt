@@ -61,10 +61,11 @@ fun MapScreen(vm: GameViewModel) {
     val map = run.map
     val available = vm.availableNodeIds()
     var showDeck by remember { mutableStateOf(false) }
+    var showHelp by remember { mutableStateOf(false) }
 
     NightScene(starSeed = run.seed.toInt()) {
         Column(Modifier.fillMaxSize()) {
-            RunHeader(vm, onDeck = { showDeck = true })
+            RunHeader(vm, onDeck = { showDeck = true }, onHelp = { showHelp = true })
 
             val scroll = rememberScrollState()
             val totalRows = SpireMap.ROWS + 1
@@ -193,11 +194,16 @@ fun MapScreen(vm: GameViewModel) {
             onDismiss = { showDeck = false },
         )
     }
+    if (showHelp) HelpDialog(onDismiss = { showHelp = false })
 }
 
-/** Shared header: HP, gold, floor, charm list, deck button. */
+/** Shared header: HP, gold, floor, charm list, deck and glossary buttons. */
 @Composable
-fun RunHeader(vm: GameViewModel, onDeck: (() -> Unit)? = null) {
+fun RunHeader(
+    vm: GameViewModel,
+    onDeck: (() -> Unit)? = null,
+    onHelp: (() -> Unit)? = null,
+) {
     val run = vm.run ?: return
     Column(
         Modifier
@@ -231,6 +237,18 @@ fun RunHeader(vm: GameViewModel, onDeck: (() -> Unit)? = null) {
                         color = HexfallColors.purple,
                         fontSize = 13.sp,
                     )
+                }
+            }
+            if (onHelp != null) {
+                Box(
+                    Modifier
+                        .size(26.dp)
+                        .border(1.dp, HexfallColors.gold.copy(alpha = 0.7f), CircleShape)
+                        .clickable { onHelp() },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text("?", color = HexfallColors.gold, fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold)
                 }
             }
         }

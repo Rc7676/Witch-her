@@ -4,11 +4,11 @@ package com.hexfall.core
  * The moon turns as combat unfolds: one phase per player turn, cycling
  * NEW -> WAXING -> FULL -> WANING. Cards and creatures care about it.
  */
-enum class MoonPhase(val displayName: String) {
-    NEW("New Moon"),
-    WAXING("Waxing Moon"),
-    FULL("Full Moon"),
-    WANING("Waning Moon");
+enum class MoonPhase(val displayName: String, val rulesText: String) {
+    NEW("New Moon", "The dark of the moon. Scrying spells draw deeper, and moths hunt."),
+    WAXING("Waxing Moon", "The moon grows. A quiet phase — prepare."),
+    FULL("Full Moon", "Lunar spells surge with bonus power. Wolves and the Queen rage."),
+    WANING("Waning Moon", "The moon fades toward dark.");
 
     fun next(): MoonPhase = entries[(ordinal + 1) % entries.size]
 }
@@ -54,45 +54,63 @@ enum class StatusType(
     val displayName: String,
     val isDebuff: Boolean,
     val decaysAtTurnEnd: Boolean = false,
+    val rulesText: String,
 ) {
-    /** Flat bonus to every hit the owner deals. */
-    SPELLPOWER("Spellpower", false),
-
-    /** Flat bonus to ward the owner gains. */
-    BULWARK("Bulwark", false),
-
-    /** Owner takes this much extra damage from every hit. */
-    HEXED("Hexed", true, decaysAtTurnEnd = true),
-
-    /** Owner's hits deal this much less damage. */
-    CHILL("Chill", true, decaysAtTurnEnd = true),
-
-    /** Start of owner's turn: take stacks as damage (ignores ward), then stacks halve. */
-    VENOM("Venom", true),
-
-    /** At 6+ stacks Doom erupts: 3x stacks damage (ignores ward), then resets to 0. */
-    DOOM("Doom", true),
-
-    /** End of owner's turn: heal stacks, then tick down by one. */
-    REGROWTH("Regrowth", false),
-
-    /** Attackers striking the owner take this much damage back. */
-    BRAMBLES("Brambles", false),
-
-    /** Enemy rage: gains this much Spellpower at the end of each of its turns. */
-    FRENZY("Frenzy", false),
-
-    /** Extra mana at the start of each of the player's turns. */
-    ATTUNED("Attuned", false),
-
-    /** Extra cards drawn at the start of each of the player's turns. */
-    OMEN("Omen", false),
-
-    /** Lose this much HP at the start of each of the player's turns. */
-    BLOOD_DEBT("Blood Debt", true),
-
-    /** Deal this much damage to all enemies at the start of each player turn. */
-    EMBERHEART("Emberheart", false),
+    SPELLPOWER(
+        "Spellpower", false,
+        rulesText = "Every hit this creature deals does that much extra damage.",
+    ),
+    BULWARK(
+        "Bulwark", false,
+        rulesText = "Ward gained is increased by that much.",
+    ),
+    HEXED(
+        "Hexed", true, decaysAtTurnEnd = true,
+        rulesText = "Takes that much extra damage from every hit. Fades by 1 each turn.",
+    ),
+    CHILL(
+        "Chill", true, decaysAtTurnEnd = true,
+        rulesText = "Every hit it deals does that much less damage. Fades by 1 each turn.",
+    ),
+    VENOM(
+        "Venom", true,
+        rulesText = "At the start of its turn: takes that much damage (ignores Ward), " +
+            "then the Venom halves.",
+    ),
+    DOOM(
+        "Doom", true,
+        rulesText = "At $DOOM_THRESHOLD or more stacks, Doom erupts: " +
+            "${DOOM_ERUPTION_MULTIPLIER}× the stacks as damage, ignoring Ward, " +
+            "then Doom resets to 0.",
+    ),
+    REGROWTH(
+        "Regrowth", false,
+        rulesText = "Heals that much at the end of its turn, then fades by 1.",
+    ),
+    BRAMBLES(
+        "Brambles", false,
+        rulesText = "Anything that strikes this creature takes that much damage back.",
+    ),
+    FRENZY(
+        "Frenzy", false,
+        rulesText = "Gains that much Spellpower at the end of each of its turns.",
+    ),
+    ATTUNED(
+        "Attuned", false,
+        rulesText = "Gain that much extra Mana at the start of each of your turns.",
+    ),
+    OMEN(
+        "Omen", false,
+        rulesText = "Draw that many extra cards at the start of each of your turns.",
+    ),
+    BLOOD_DEBT(
+        "Blood Debt", true,
+        rulesText = "Lose that much HP at the start of each of your turns.",
+    ),
+    EMBERHEART(
+        "Emberheart", false,
+        rulesText = "At the start of each of your turns, deal that much damage to ALL enemies.",
+    ),
 }
 
 /** Doom erupts when a creature's stacks reach this threshold. */
