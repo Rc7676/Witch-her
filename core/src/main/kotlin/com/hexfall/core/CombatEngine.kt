@@ -120,7 +120,9 @@ class CombatEngine(
             moon = moon.next()
             log += "The moon turns: ${moon.displayName}."
         }
-        player.ward = 0
+        // Ward expires at the start of each turn — except on turn 1, where it
+        // would wipe Ward granted before combat began (Obsidian Figurine).
+        if (turn > 1) player.ward = 0
         mana = baseMana + player.statusAmount(StatusType.ATTUNED)
         if (moon == MoonPhase.FULL && run.hasRelic("wolfpelt_cloak")) {
             mana += 1

@@ -103,7 +103,12 @@ object EnemyLibrary {
 
     // --- Boss ------------------------------------------------------------
 
-    val hollowQueen = EnemyDef("hollow_queen", "The Hollow Queen", 155, 155) { turn, _, self, moon ->
+    // Tuned against BalanceTest: at 155 HP with a 15 HP heal, skilled runs
+    // reached her 81% of the time and still lost with her averaging 36 HP
+    // left — she undid the last stretch faster than a mid-size deck could
+    // close it. Less HP and a smaller heal keep her a wall without making
+    // the final fifth of the fight feel unwinnable.
+    val hollowQueen = EnemyDef("hollow_queen", "The Hollow Queen", 135, 135) { turn, _, self, moon ->
         if (moon == MoonPhase.FULL) {
             EnemyMove.Attack(11, times = 2)
         } else {
@@ -111,7 +116,7 @@ object EnemyLibrary {
                 0 -> EnemyMove.Debuff(StatusType.HEXED, 3, "Royal Decree")
                 1 -> EnemyMove.Attack(15)
                 2 -> if (self.hp < self.maxHp / 2) {
-                    EnemyMove.HealSelf(14, "Drink the Court")
+                    EnemyMove.HealSelf(9, "Drink the Court")
                 } else {
                     EnemyMove.Buff(StatusType.FRENZY, 3, "Coronation")
                 }

@@ -19,8 +19,10 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -74,7 +76,7 @@ private fun statusLine(combatant: Combatant): String =
     }
 
 @Composable
-fun CombatScreen(vm: GameViewModel) {
+fun CombatScreen(vm: GameViewModel, handScroll: LazyListState = rememberLazyListState()) {
     val engine = vm.combat ?: return
     val density = LocalDensity.current
 
@@ -299,6 +301,7 @@ fun CombatScreen(vm: GameViewModel) {
                         .fillMaxWidth()
                         .height(176.dp)
                         .padding(vertical = 6.dp),
+                    state = handScroll,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     contentPadding = PaddingValues(horizontal = 12.dp),
                 ) {
