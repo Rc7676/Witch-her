@@ -95,23 +95,46 @@ fun CombatScreen(vm: GameViewModel, handScroll: LazyListState = rememberLazyList
     val draggingTargeted = dragCard?.def?.needsTarget == true
     val draggingSelf = dragCard != null && dragCard?.def?.needsTarget == false
     // One slack value for both the highlight and the drop test, so a card
-    // always lands on the enemy the glow says it will.
-    val targetSlack = with(density) { 16.dp.toPx() }
-    val hoveredEnemy: Int? = if (draggingTargeted) {
-        enemyBounds.entries
-            .firstOrNull { it.value.inflate(targetSlack).contains(dragPos) }?.key
-    } else null
+    // always lands on the enemy the glow says it will. Generous, because a
+    // fingertip is far bigger than the pixel it reports.
+    val targetSlack = with(density) { 28.dp.toPx() }
+
+    /**
+     * The enemy a spell dropped at [point] would hit: the one under the
+     * finger, or else the nearest one if the finger is anywhere over the
+     * battlefield. Fingers are imprecise, so landing near a foe is enough.
+     *
+     * Deliberately a function rather than a composition value. The gesture
+     * callbacks below run inside a pointerInput coroutine that is NOT
+     * restarted on recomposition, so any composition value they capture is
+     * frozen at drag start — reading snapshot state through a function keeps
+     * them live. Capturing the target by value here is exactly what stopped
+     * drag-to-cast from ever landing.
+     */
+    fun dropTarget(point: Offset): Int? {
+        val under = enemyBounds.entries
+            .firstOrNull { it.value.inflate(targetSlack).contains(point) }
+            ?.key
+        if (under != null) return under
+        if (!battlefieldBounds.contains(point)) return null
+        return enemyBounds.entries
+            .minByOrNull { (it.value.center - point).getDistance() }
+            ?.key
+    }
+
+    // The glow uses the same function as the drop, so it can never point at
+    // an enemy the card will not actually hit.
+    val hoveredEnemy: Int? = if (draggingTargeted) dropTarget(dragPos) else null
     val hoveringSelf = draggingSelf && battlefieldBounds.contains(dragPos)
 
     fun finishDrag() {
         val card = dragCard
-        val target = hoveredEnemy
-        val onSelf = hoveringSelf
         dragCard = null
         if (card == null || !engine.canPlay(card)) return
+        val dropPoint = dragPos // read live, never captured
         if (card.def.needsTarget) {
-            if (target != null) vm.playCard(card, target)
-        } else if (onSelf) {
+            dropTarget(dropPoint)?.let { vm.playCard(card, it) }
+        } else if (battlefieldBounds.contains(dropPoint)) {
             vm.playCard(card, null)
         }
     }
